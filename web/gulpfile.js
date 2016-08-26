@@ -13,24 +13,26 @@ var browserSync = require('browser-sync');
 var pagespeed = require('psi');
 var reload = browserSync.reload;
 
+var MyEndpoint = require('./lib/MyEndpoint.js');
+
 // Lint JavaScript
 gulp.task('jshint', function () {
   return gulp.src('app/scripts/**/*.js')
-    .pipe(reload({stream: true, once: true}))
-    .pipe($.jshint())
-    .pipe($.jshint.reporter('jshint-stylish'))
-    .pipe($.if(!browserSync.active, $.jshint.reporter('fail')));
+      .pipe(reload({stream: true, once: true}))
+      .pipe($.jshint())
+      .pipe($.jshint.reporter('jshint-stylish'))
+      .pipe($.if(!browserSync.active, $.jshint.reporter('fail')));
 });
 
 // Optimize images
 gulp.task('images', function () {
   return gulp.src('app/images/**/*')
-    .pipe($.cache($.imagemin({
-      progressive: true,
-      interlaced: true
-    })))
-    .pipe(gulp.dest('dist/images'))
-    .pipe($.size({title: 'images'}));
+      .pipe($.cache($.imagemin({
+        progressive: true,
+        interlaced: true
+      })))
+      .pipe(gulp.dest('dist/images'))
+      .pipe($.size({title: 'images'}));
 });
 
 // Copy all non html files at the root level (app)
@@ -41,50 +43,50 @@ gulp.task('copy', function () {
   ], {
     dot: true
   }).pipe(gulp.dest('dist'))
-    .pipe($.size({title: 'copy'}));
+      .pipe($.size({title: 'copy'}));
 });
 
 var minify = function(path, env) {
   gulp.src([path])
-  .pipe($.replace(/scripts\/config.js/g,
-      env ? 'scripts/config-'.concat(env).concat('.js') : 'scripts/config.js'))
-  .pipe($.usemin({
-    html: [$.minifyHtml({empty: true})],
-    css: [$.minifyCss(),
+      .pipe($.replace(/scripts\/config.js/g,
+          env ? 'scripts/config-'.concat(env).concat('.js') : 'scripts/config.js'))
+      .pipe($.usemin({
+        html: [$.minifyHtml({empty: true})],
+        css: [$.minifyCss(),
           $.size({title: 'css ' + path}),
           'concat'],
-    vendor: [$.uglify(),
-             $.size({title: 'vendor ' + path}),
-             'concat'],
-    js: [$.ngAnnotate(),
-         $.uglify(),
-         $.size({title: 'js ' + path}),
-         'concat']
-  }))
-  .pipe(gulp.dest('dist'));
+        vendor: [$.uglify(),
+          $.size({title: 'vendor ' + path}),
+          'concat'],
+        js: [$.ngAnnotate(),
+          $.uglify(),
+          $.size({title: 'js ' + path}),
+          'concat']
+      }))
+      .pipe(gulp.dest('dist'));
 };
 
 //Minify css and js marked in html for build
 gulp.task('minify', function() {
-minify('app/app.html');
+  minify('app/app.html');
 });
 
 //Minify css and js marked in html for build, for prod env
 gulp.task('minify-prod', function() {
-minify('app/app.html', 'prod');
+  minify('app/app.html', 'prod');
 });
 
 // Minify partials html
 gulp.task('partials', function() {
   gulp.src('app/partials/*.html')
-       .pipe($.minifyHtml({empty: true}))
-       .pipe(gulp.dest('dist/partials/'));
+      .pipe($.minifyHtml({empty: true}))
+      .pipe(gulp.dest('dist/partials/'));
 });
 
 // Copy icon fonts
 gulp.task('icons', function() {
   gulp.src(['app/bower_components/font-awesome/fonts/**.*'])
-  .pipe(gulp.dest('dist/fonts'));
+      .pipe(gulp.dest('dist/fonts'));
 });
 
 // Clean output directory
@@ -99,6 +101,10 @@ gulp.task('serve', [], function () {
     port: 8103
   });
 
+
+  var io = createSocket();
+  trackBlockChanges(io);
+
   //gulp.watch(['app/**.html'], reload);*/
   gulp.watch(['app/app.html'], reload);
   gulp.watch(['app/partials/*.html'], reload);
@@ -109,23 +115,23 @@ gulp.task('serve', [], function () {
 
 // Watch files for changes & reload mobile app
 gulp.task('serve:ionic', [], function () {
-browserSync({
- notify: false,
- logPrefix: 'gulp serve:ionic',
- server: {baseDir: 'ionic/www', index: 'index.html',
-   routes: {
-     '/scripts': 'app/scripts',
-     '/bower_components': 'app/bower_components',
-     '/vendor_mods': 'app/vendor_mods'
-   }},
- port: 8100
-});
+  browserSync({
+    notify: false,
+    logPrefix: 'gulp serve:ionic',
+    server: {baseDir: 'ionic/www', index: 'index.html',
+      routes: {
+        '/scripts': 'app/scripts',
+        '/bower_components': 'app/bower_components',
+        '/vendor_mods': 'app/vendor_mods'
+      }},
+    port: 8100
+  });
 
-gulp.watch(['ionic/www/**/*.html'], reload);
-gulp.watch(['ionic/www/css/*.css'], reload);
-gulp.watch(['ionic/www/js/**/*.js'], ['jshint']);
+  gulp.watch(['ionic/www/**/*.html'], reload);
+  gulp.watch(['ionic/www/css/*.css'], reload);
+  gulp.watch(['ionic/www/js/**/*.js'], ['jshint']);
 
-gulp.watch(['app/scripts/**/*.js'], ['jshint']);
+  gulp.watch(['app/scripts/**/*.js'], ['jshint']);
 });
 
 // Build and serve the output from the dist build
@@ -174,3 +180,125 @@ gulp.task('pagespeed', function (cb) {
     // key: 'YOUR_API_KEY'
   }, cb);
 });
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+var responseExample = {
+  "Event": "block",
+  "register": null,
+  "block": {
+    "version": 0,
+    "timestamp": null,
+    "transactions": [
+      {
+        "type": "CHAINCODE_INVOKE",
+        "chaincodeID": {},
+        "payload": {},
+        "metadata": {},
+        "txid": "d6b67c6f-5b77-43aa-8aef-9a528c874016",
+        "timestamp": {
+          "seconds": "1472243595",
+          "nanos": 878832249
+        },
+        "confidentialityLevel": "PUBLIC",
+        "confidentialityProtocolVersion": "",
+        "nonce": {},
+        "toValidators": {},
+        "cert": {},
+        "signature": {}
+      }
+    ],
+    "stateHash": {},
+    "previousBlockHash": {},
+    "consensusMetadata": {},
+    "nonHashData": {
+      "localLedgerCommitTimestamp": {
+        "seconds": "1472243627",
+        "nanos": 376272706
+      },
+      "chaincodeEvents": [
+        {
+          "chaincodeID": "",
+          "txID": "",
+          "eventName": "",
+          "payload": {}
+        }
+      ]
+    }
+  },
+  "chaincodeEvent": null,
+  "rejection": null,
+  "unregister": null
+}
+
+
+
+
+/**
+ *
+ */
+function createSocket(){
+  var http = require('http').Server();
+  var io = require('socket.io')(http);
+
+  io.on('connection', function(socket){
+
+
+    socket.emit('chainblock', responseExample);
+
+    socket.emit('hello', "Hi user!");
+    socket.on('hello',	function(payload) {
+      console.log('client hello:', payload);
+    });
+
+
+    //console.log(socket);
+    console.log('A new user connected');
+    // io.emit('chat_message_response',"1 New user Conencted to chat");
+
+    socket.on('disconnect', function(socket){
+      console.log("User Disconnected");
+      // io.emit('chat_message_response',"1 user disconnected.");
+    });
+
+  });
+
+  // now listen server.
+  http.listen(8155,function(){
+    console.log('Socket Started Listening on Port: 8155');
+  });
+
+  return io;
+}
+
+
+/**
+ *
+ */
+function trackBlockChanges(/*endpoint,*/io){
+
+  // create grpc endpoint
+  var endpoint = new MyEndpoint('54.198.39.96:7053');
+
+  var stream = endpoint.createChatStream();
+  stream.on('data', message=>{
+    console.log('data:', message);
+    if(message.block){
+      io.emit('chainblock', message);
+    }
+  });
+  stream.on('error', err=>{
+    console.log('error:', err);
+
+    setTimeout(()=>{
+      trackBlockChanges(io);
+    }, 1000);
+  });
+
+}
+
+
+

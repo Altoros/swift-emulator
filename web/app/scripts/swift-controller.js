@@ -180,3 +180,105 @@ angular.module('swiftController', ['LocalStorageModule'])
   .controller('SwiftController', SwiftController)
   // .controller('VerifyModalController', VerifyModalController);
 
+
+
+
+
+
+// scope:
+// = is for two-way binding
+// @ simply reads the value (one-way binding)
+// & is used to bind functions
+.directive('blockchainLog', function($document){
+  return {
+    restrict:'E',
+    replace: true,
+    scope: false,
+    // scope: { name:'=', id:'=' },
+    template: '<div class="md-whiteframe-12dp" ng-init="ctl.init()">'
+                +'Yahho!'
+              +'</div>',
+    controllerAs: 'ctl',
+    controller: function($scope, $element, $attrs, $transclude, $rootScope){
+      var ctl = this;
+      /**
+       *
+       */
+      ctl.init = function(){
+        var socket = io('ws://'+location.hostname+':8155/');
+        socket.emit('hello', 'Hi from client');
+
+        socket.on('hello', function(payload){
+          console.log('server hello:', payload);
+        });
+
+        socket.on('chainblock', function(payload){
+          console.log('server chainblock:', payload);
+          addChainblock(payload);
+        });
+      };
+
+      /**
+       * @param chainblock
+       */
+      function addChainblock(chainblock){
+        var tx = chainblock && chainblock.block && chainblock.block.transactions || [];
+        $element.append( tx.map(function(item){
+          return '<li>'+item.txid+'</li>';
+        }));
+      }
+
+    }//-controller
+}});
+
+var responseExample = {
+    "Event": "block",
+    "register": null,
+    "block": {
+        "version": 0,
+        "timestamp": null,
+        "transactions": [
+          {
+            "type": "CHAINCODE_INVOKE",
+            "chaincodeID": {},
+            "payload": {},
+            "metadata": {},
+            "txid": "d6b67c6f-5b77-43aa-8aef-9a528c874016",
+            "timestamp": {
+              "seconds": "1472243595",
+              "nanos": 878832249
+            },
+            "confidentialityLevel": "PUBLIC",
+            "confidentialityProtocolVersion": "",
+            "nonce": {},
+            "toValidators": {},
+            "cert": {},
+            "signature": {}
+          }
+        ],
+        "stateHash": {},
+        "previousBlockHash": {},
+        "consensusMetadata": {},
+        "nonHashData": {
+            "localLedgerCommitTimestamp": {
+              "seconds": "1472243627",
+                  "nanos": 376272706
+            },
+            "chaincodeEvents": [
+              {
+                "chaincodeID": "",
+                "txID": "",
+                "eventName": "",
+                "payload": {}
+              }
+            ]
+        }
+    },
+    "chaincodeEvent": null,
+    "rejection": null,
+    "unregister": null
+  };
+
+
+
+
