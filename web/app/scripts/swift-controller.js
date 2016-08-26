@@ -193,9 +193,9 @@ angular.module('swiftController', ['LocalStorageModule'])
   return {
     restrict:'E',
     replace: true,
-    scope: false,
+    scope: true,
     // scope: { name:'=', id:'=' },
-    template: '<div class="md-whiteframe-12dp" ng-init="ctl.init()">'
+    template: '<div class="" ng-init="ctl.init()">'
                 +'Yahho!'
               +'</div>',
     controllerAs: 'ctl',
