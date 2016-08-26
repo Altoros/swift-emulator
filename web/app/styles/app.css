@@ -158,13 +158,15 @@ span.icon-two {
   position: relative;
 }
 
+
+
 @media (min-width: 992px) {
 /*@media (min-width: 750px) {*/
 /*@media (min-width: 1170px) {*/
   .vertical-text {
     transform: rotate(-90deg);
     transform-origin: left top 0;
-    width: 150px;
+    width: 300px;
     text-align: right;
   }
 
@@ -173,7 +175,7 @@ span.icon-two {
     position: absolute;
     text-transform: uppercase;
     left: -30px;
-    top: 130px;
+    top: 280px;
   }
 
 }
@@ -188,4 +190,34 @@ span.icon-two {
     text-transform: uppercase;
     top: -50px;
   }
+}
+
+
+.my-btn-group {
+  width: 280px;
+}
+.my-btn-group .btn{
+  min-width: 130px;
+}
+
+
+.badge-point{
+  height: 14px;
+  width: 14px;
+}
+
+.badge-warning{
+  background-color: #f0ad4e;
+}
+.badge-success{
+  background-color: #5cb85c;
+}
+.badge-danger{
+  background-color: #d9534f;
+}
+.badge-info{
+  background-color: #5bc0de;
+}
+.badge-primary{
+  background-color: #337ab7;
 }

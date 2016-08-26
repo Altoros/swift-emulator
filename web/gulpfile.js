@@ -46,19 +46,19 @@ gulp.task('copy', function () {
 
 var minify = function(path, env) {
   gulp.src([path])
-  .pipe($.replace(/scripts\/config.js/g, 
+  .pipe($.replace(/scripts\/config.js/g,
       env ? 'scripts/config-'.concat(env).concat('.js') : 'scripts/config.js'))
   .pipe($.usemin({
     html: [$.minifyHtml({empty: true})],
-    css: [$.minifyCss(), 
-          $.size({title: 'css ' + path}), 
+    css: [$.minifyCss(),
+          $.size({title: 'css ' + path}),
           'concat'],
-    vendor: [$.uglify(), 
-             $.size({title: 'vendor ' + path}), 
+    vendor: [$.uglify(),
+             $.size({title: 'vendor ' + path}),
              'concat'],
-    js: [$.ngAnnotate(), 
-         $.uglify(), 
-         $.size({title: 'js ' + path}), 
+    js: [$.ngAnnotate(),
+         $.uglify(),
+         $.size({title: 'js ' + path}),
          'concat']
   }))
   .pipe(gulp.dest('dist'));

@@ -3,10 +3,79 @@
  * @classdesc
  * @ngInject
  */
-function SwiftController($scope, $log, $interval, $uibModal, localStorageService,
-    UserService, PeerService) {
+ /*
+
+ PaymentOrder : {
+  from : '',
+  to   : '',
+  amount : '',
+  purpose: '',
+  description:'',
+
+  confirm1 : {boolean},
+  confirm2 : {boolean}
+
+ }
+
+
+
+ */
+function SwiftController($scope, $log, $interval, /*$uibModal, localStorageService,*/ PeerService) {
 
   var ctl = this;
+
+  //
+  ctl.CONFIRM_OFF = 'off';
+  ctl.CONFIRM_LIMIT = 'limit';
+  ctl.CONFIRM_ON = 'on';
+
+
+  ctl.paymentList = [];
+  ctl.autoconfirm = ctl.CONFIRM_LIMIT;
+
+  ctl.init = function(){
+    ctl.reload();
+  };
+
+  ctl.reload = function(){
+    PeerService.getPayments().then(function(list) {
+      ctl.paymentList = list;
+    });
+  };
+
+
+  ctl.showInList = function(value, index, array){
+    return value.confirm1 !== undefined ||  value.confirm2 !== undefined;
+  };
+
+  ctl.getAutoconfirmLabel = function(value){
+    switch(value){
+      case ctl.CONFIRM_OFF: return 'Off';
+      case ctl.CONFIRM_LIMIT: return 'Limit reached';
+      case ctl.CONFIRM_ON: return 'On';
+      default: return 'Unknown';
+    }
+  };
+
+
+  ctl.getAutoconfirmBadge = function(value){
+    switch(value){
+      case ctl.CONFIRM_OFF: return 'badge-default';
+      case ctl.CONFIRM_LIMIT: return 'badge-warning';
+      case ctl.CONFIRM_ON: return 'badge-success';
+      default: return '';
+    }
+  };
+
+}
+
+/*
+
+  PeerService.confirm1()
+  PeerService.confirm2()
+
+
+/*
 
   ctl.requests = [];
   ctl.requestsVerified = [];
@@ -78,11 +147,6 @@ function SwiftController($scope, $log, $interval, $uibModal, localStorageService
   };
 
 
-
-  /**
-   *
-   */
-
   function _updateData(){
     localStorageService.set('pr', ctl.requests);
     localStorageService.set('prv', ctl.requestsVerified);
@@ -98,10 +162,6 @@ function SwiftController($scope, $log, $interval, $uibModal, localStorageService
 
 
 
-
-/**
- *
- */
 function VerifyModalController($uibModalInstance) {
 
   var ctl = this;
@@ -114,8 +174,9 @@ function VerifyModalController($uibModalInstance) {
     $uibModalInstance.dismiss('cancel');
   };
 }
+*/
 
-angular.module('offlineController', ['LocalStorageModule'])
-  .controller('OfflineController', SwiftController)
-  .controller('VerifyModalController', VerifyModalController);
+angular.module('swiftController', ['LocalStorageModule'])
+  .controller('SwiftController', SwiftController)
+  // .controller('VerifyModalController', VerifyModalController);
 

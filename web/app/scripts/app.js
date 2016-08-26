@@ -1,21 +1,21 @@
 angular.module('app', ['ui.router',
                        'ui.bootstrap',
-                       'timeService',
-                       'userService',
                        'peerService',
-                       'demoController',
-                       'bondListController',
-                       'issuerContractListController',
-                       'investorContractListController',
-                       'marketController',
-                       'offlineController',
+                       'swiftController',
                        'config'])
 
 .config(function($stateProvider, $urlRouterProvider) {
 
-  $urlRouterProvider.otherwise('/');
+  $urlRouterProvider.otherwise('/swift');
 
   $stateProvider
+    .state('swift', {
+      url: '/swift',
+      templateUrl: 'partials/swift.html',
+      controller: 'SwiftController as ctl'
+    });
+
+  /*
   .state('demo', {
     url: '/',
     templateUrl: 'partials/demo.html',
@@ -40,12 +40,11 @@ angular.module('app', ['ui.router',
     url: 'market',
     templateUrl: 'partials/market.html',
     controller: 'MarketController as ctl'
-  })
-  .state('demo.offline', {
-    url: 'offline',
-    templateUrl: 'partials/offline.html',
-    controller: 'OfflineController as ctl'
-  });
+  })*/
 
 
-});
+})
+/*.controller('SiteController', function(){
+
+
+});*/

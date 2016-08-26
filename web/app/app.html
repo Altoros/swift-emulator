@@ -22,7 +22,17 @@
 
   <body style="padding-top: 40px;">
 
-    <div ui-view><div class="loading"><i class="fa fa-spinner fa-spin"></i></div></div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+
+          <div ui-view><div class="loading"><i class="fa fa-spinner fa-spin"></i></div></div>
+          <!-- <ui-view/> -->
+        </div>
+      </div>
+    </div>
+
 
     <!--  cdn with fallback -->
 
@@ -51,6 +61,7 @@
 
     <!-- build:js scripts/app.min.js -->
     <script src="scripts/config.js"></script>
+    <script src="scripts/peer-service.js"></script>
     <script src="scripts/swift-controller.js"></script>
     <script src="scripts/app.js"></script>
     <!-- endbuild -->

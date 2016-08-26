@@ -3,10 +3,33 @@
  * @classdesc
  * @ngInject
  */
-function PeerService($log, $q, $http, cfg, UserService) {
+function PeerService($log, $q, $http, cfg) {
 
   // jshint shadow: true
   var PeerService = this;
+
+
+  PeerService.getPayments = function(){
+    // TODO: stub
+
+    var stubData = [
+      {from: 'from1', to: 'to1', amount: 'amount1', purpose:'purpose1', description:'description1', confirm1:false, confirm2:false},
+      {from: 'from2', to: 'to2', amount: 'amount2', purpose:'purpose2', description:'description2', confirm1:true, confirm2:false},
+      {from: 'from3', to: 'to3', amount: 'amount3', purpose:'purpose3', description:'description3', /*confirm1:false,*/ confirm2:false},
+      {from: 'from4', to: 'to4', amount: 'amount4', purpose:'purpose4', description:'description4', confirm1:false, confirm2:false},
+      {from: 'from5', to: 'to5', amount: 'amount5', purpose:'purpose5', description:'description5', confirm1:false, confirm2:true},
+      {from: 'from6', to: 'to6', amount: 'amount6', purpose:'purpose6', description:'description6', confirm1:false, /*confirm2:false*/},
+      {from: 'from7', to: 'to7', amount: 'amount7', purpose:'purpose7', description:'description7', confirm1:true, confirm2:true},
+      {from: 'from8', to: 'to8', amount: 'amount8', purpose:'purpose8', description:'description8', /*confirm1:false, confirm2:false*/},
+      {from: 'from9', to: 'to9', amount: 'amount9', purpose:'purpose9', description:'description9', confirm1:false, confirm2:false},
+      {from: 'from10', to: 'to10', amount: 'amount10', purpose:'purpose10', description:'description10', confirm1:false, confirm2:false},
+      {from: 'from11', to: 'to11', amount: 'amount11', purpose:'purpose11', description:'description11', confirm1:false, confirm2:false},
+      {from: 'from12', to: 'to12', amount: 'amount12', purpose:'purpose12', description:'description12', confirm1:false, confirm2:false}
+    ];
+    return Promise.resolve(stubData);
+  };
+
+
 
   var payload = {
       'jsonrpc': '2.0',

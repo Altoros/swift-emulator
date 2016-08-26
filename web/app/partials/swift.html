@@ -1,76 +1,73 @@
-<div class="bs-callout bs-callout-inactive" id="callout-type-b-i-elems">
-    <h3 class="vertical-text">Offline</h3>
 
-    <h2>Step 1</h2>
-    <div class="row">
-        <input class="col-md-4 col-md-offset-1 btn btn-primary" type="button" name="bill" value="New payment request" ng-click="ctl.open()">
+<nav class="navbar navbar-default" ng-init="ctl.init()">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <!-- <button type="button" class="collapsed navbar-toggle" data-toggle="collapse" data-target="#navbar1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button> -->
+            <a href="#" class="navbar-brand">Brand</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbar1">
+            <ul class="nav navbar-nav pull-right">
+                <li class="dropdown" style="width: 275px">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                      Auto confirmation : <span class="badge badge-point" ng-class="ctl.getAutoconfirmBadge(ctl.autoconfirm)"> </span> {{ctl.getAutoconfirmLabel(ctl.autoconfirm)}}
+                      <span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#" ng-click="ctl.autoconfirm = ctl.CONFIRM_OFF">{{::ctl.getAutoconfirmLabel(ctl.CONFIRM_OFF)}}</a></li>
+                    <li><a href="#" ng-click="ctl.autoconfirm = ctl.CONFIRM_LIMIT">{{::ctl.getAutoconfirmLabel(ctl.CONFIRM_LIMIT)}}</a></li>
+                    <li><a href="#" ng-click="ctl.autoconfirm = ctl.CONFIRM_ON">{{::ctl.getAutoconfirmLabel(ctl.CONFIRM_ON)}}</a></li>
+                  </ul>
+                </li>
+            </ul>
+          </div>
+
+        </div>
     </div>
+</nav>
 
-    <hr />
 
-    <h2>Step 2</h2>
+<div class="bs-callout bs-callout-info" id="callout-type-b-i-elems" >
+    <h3 class="vertical-text">Payment Orders</h3>
+
+    <!-- <h2></h2> -->
     <table class="table">
         <thead>
             <tr>
+                <th>#</th>
                 <th>From</th>
                 <th>To</th>
                 <th>Amount</th>
                 <th>Purpose</th>
                 <th>Payment instructions</th>
-                <th>Action</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="o in ctl.requests">
+            <tr ng-repeat="o in ctl.paymentList|filter:ctl.showInList as list track by $index ">
+                <td>{{::$index+1}}</td>
                 <td>{{::o.from}}</td>
                 <td>{{::o.to}}</td>
                 <td>{{::o.amount}}</td>
                 <td>{{::o.purpose}}</td>
                 <td>{{::o.description}}</td>
-                <td>
-                    <input type="button" class="btn btn-default" ng-click="ctl.verify(o)" value="Verify" ng-hide="o.status"/>
-                    <input type="button" class="btn btn-danger" ng-click="ctl.decline(o)" value="Decline" ng-show="o.status"/>
+                <td class="my-btn-group">
+                    <a href="#" ng-show="o.confirm1===false" class="btn btn-default" ng-click="ctl.submitOnline($index)"><i class="glyphicon glyphicon-ok"></i> Confirm1</a>
+                    <a href="#" ng-if="o.confirm1===true" class="btn btn-link" disabled><i class="glyphicon glyphicon-time"></i> Processing...</a>
+                    <a href="#" ng-if="o.confirm1===undefined" class="btn btn-success" disabled><i class="glyphicon glyphicon-saved"></i> Confirmed</a>
+
+                    <a href="#" ng-show="o.confirm2===false" class="btn btn-default" ng-click="ctl.submitOnline($index)"><i class="glyphicon glyphicon-ok"></i> Confirm2</a>
+                    <a href="#" ng-if="o.confirm2===true" class="btn btn-link" disabled><i class="glyphicon glyphicon-time"></i> Processing...</a>
+                    <a href="#" ng-if="o.confirm2===undefined" class="btn btn-success" disabled><i class="glyphicon glyphicon-saved"></i> Confirmed</a>
                 </td>
             </tr>
 
-            <tr ng-hide="ctl.requests.length">
-                <td colspan="5" align="center">
-                    <i>No items</i>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
-</div>
-
-<div class="bs-callout bs-callout-info" id="callout-type-b-i-elems">
-    <h3 class="vertical-text">Online</h3>
-
-    <h2>Step 3</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>From</th>
-                <th>To</th>
-                <th>Amount</th>
-                <th>Purpose</th>
-                <th>Payment instructions</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-             <tr ng-repeat="o in ctl.requestsVerified track by $index">
-                <td>{{::o.from}}</td>
-                <td>{{::o.to}}</td>
-                <td>{{::o.amount}}</td>
-                <td>{{::o.purpose}}</td>
-                <td>{{::o.description}}</td>
-                <td>
-                    <input type="button" class="btn btn-success" ng-click="ctl.submitOnline($index)" value="Sign and Confirm" />
-                </td>
-            </tr>
-
-            <tr ng-hide="ctl.requestsVerified.length">
+            <tr ng-hide="list.length">
                 <td colspan="5" align="center">
                     <i>No items</i>
                 </td>
@@ -88,33 +85,33 @@
     <div class="modal-body">
 
         <form id="pr_form" class="form-horizontal">
-          <div class="form-group">
-            <label for="from" class="col-sm-2 control-label">From</label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" id="from" placeholder="From" ng-model="pr.from">
+            <div class="form-group">
+                <label for="from" class="col-sm-2 control-label">From</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="from" placeholder="From" ng-model="pr.from">
+                </div>
             </div>
-          </div>
-          <div class="form-group">
-            <label for="to" class="col-sm-2 control-label">To</label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" id="to" placeholder="To" ng-model="pr.to">
+            <div class="form-group">
+                <label for="to" class="col-sm-2 control-label">To</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="to" placeholder="To" ng-model="pr.to">
+                </div>
             </div>
-          </div>
-          <div class="form-group">
-            <label for="amount" class="col-sm-2 control-label">Amount</label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" id="amount" placeholder="Amount" ng-model="pr.amount">
+            <div class="form-group">
+                <label for="amount" class="col-sm-2 control-label">Amount</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="amount" placeholder="Amount" ng-model="pr.amount">
+                </div>
             </div>
-          </div>
 
-          <input type="hidden" ng-model="pr.purpose" ng-init="pr.purpose='Payment'">
+            <input type="hidden" ng-model="pr.purpose" ng-init="pr.purpose='Payment'">
 
-          <div class="form-group">
-            <label for="description" class="col-sm-2 control-label">Description</label>
-            <div class="col-sm-offset-2 col-sm-10">
-              <textarea class="form-control" name="description" placeholder="Description" ng-model="pr.description"></textarea>
+            <div class="form-group">
+                <label for="description" class="col-sm-2 control-label">Description</label>
+                <div class="col-sm-offset-2 col-sm-10">
+                    <textarea class="form-control" name="description" placeholder="Description" ng-model="pr.description"></textarea>
+                </div>
             </div>
-          </div>
         </form>
 
     </div>
