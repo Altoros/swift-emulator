@@ -44,9 +44,15 @@ function MyEndpoint(endpoint/*, credentials */){
     var stream = eventsService.chat();
     // console.log('eventsService: ', /*stream,*/ stream.constructor.name);
 
-    // stream.on('data', message=>{
-    //   console.log('data:', message);
-    // });
+    stream.on('data', message=>{
+      if(message.block){
+        console.log('block:', message.block.stateHash.toString('base64')/*.substr(16)+'...'*/ );
+      } else if(message.Event){
+        console.log('event:', message.Event);
+      } else {
+        console.log('data:', message);
+      }
+    });
     // stream.on('error', err=>{
     //   console.log('error:', err);
     //   throw err;

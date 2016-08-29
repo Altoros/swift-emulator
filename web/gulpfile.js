@@ -194,7 +194,7 @@ var responseExample = {
     "timestamp": null,
     "transactions": [
       {
-        "type": "CHAINCODE_INVOKE",
+        "type": "MY_CHAINCODE_TEST",
         "chaincodeID": {},
         "payload": {},
         "metadata": {},
@@ -245,22 +245,21 @@ function createSocket(){
   var io = require('socket.io')(http);
 
   io.on('connection', function(socket){
-
-
-    socket.emit('chainblock', responseExample);
-
-    socket.emit('hello', "Hi user!");
-    socket.on('hello',	function(payload) {
-      console.log('client hello:', payload);
-    });
-
-
     //console.log(socket);
-    console.log('A new user connected');
+    console.log('[io] a new user connected');
     // io.emit('chat_message_response',"1 New user Conencted to chat");
 
+
+    // DEBUG
+    socket.emit('chainblock', responseExample);
+
+    socket.emit('hello', 'Hi user!');
+    socket.on('hello',	function(payload) {
+      console.log('[io] client hello:', payload);
+    });
+
     socket.on('disconnect', function(socket){
-      console.log("User Disconnected");
+      console.log('[io] user disconnected');
       // io.emit('chat_message_response',"1 user disconnected.");
     });
 
@@ -268,7 +267,7 @@ function createSocket(){
 
   // now listen server.
   http.listen(8155,function(){
-    console.log('Socket Started Listening on Port: 8155');
+    console.log('[io] Socket Started Listening on Port: 8155');
   });
 
   return io;
