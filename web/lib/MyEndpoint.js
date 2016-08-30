@@ -57,9 +57,12 @@ function MyEndpoint(endpoint/*, credentials */){
     //   console.log('error:', err);
     //   throw err;
     // });
-    // stream.on('end', message=>{
-    //   console.log('end:', message);
-    // });
+    stream.on('end', message=>{
+      console.log('protobuf: stream end:', message);
+    });
+    stream.on('error', message=>{
+      console.log('protobuf: stream error:', message);
+    });
 
     stream.write(event);
 
