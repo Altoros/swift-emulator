@@ -2,7 +2,8 @@ angular.module('app', ['ui.router',
                        'ui.bootstrap',
                        'peerService',
                        'swiftController',
-                       'config'])
+                       'config',
+                       'MyBlockchain'])
 
 .config(function($stateProvider, $urlRouterProvider) {
 

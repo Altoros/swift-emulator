@@ -1,5 +1,5 @@
 angular.module('config', [])
-.constant('cfg', 
+.constant('cfg',
     {
   endpoint: 'http://localhost:7050/chaincode',
   secureContext: 'auditor0',
