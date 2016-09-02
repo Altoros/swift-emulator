@@ -73,4 +73,132 @@ function MyEndpoint(endpoint/*, credentials */){
 }//
 
 
-module.exports = MyEndpoint;
+
+
+/**
+ *
+ */
+function createSocket(){
+  var http = require('http').Server();
+  var io = require('socket.io')(http);
+
+  io.on('connection', function(socket){
+    //console.log(socket);
+    console.log('[io] a new user connected');
+    // io.emit('chat_message_response',"1 New user Conencted to chat");
+
+
+    // DEBUG
+    socket.emit('chainblock', getResponseExample() );
+
+    socket.emit('hello', 'Hi user!');
+    socket.on('hello',  function(payload) {
+      console.log('[io] client hello:', payload);
+    });
+
+    socket.on('disconnect', function(socket){
+      console.log('[io] user disconnected');
+      // io.emit('chat_message_response',"1 user disconnected.");
+    });
+
+  });
+
+  // now listen server.
+  http.listen(8155,function(){
+    console.log('[io] Socket Started Listening on Port: 8155');
+  });
+
+  return io;
+}
+
+
+/**
+ *
+ */
+function _trackBlockChanges(endpoint, io){
+  var that = this;
+
+  // create grpc endpoint
+  var myEndpoint = new MyEndpoint(endpoint);
+
+  var stream = myEndpoint.createChatStream();
+  stream.on('data', message=>{
+    console.log('data:', message);
+    if(message.block){
+      io.emit('chainblock', message);
+    }
+  });
+  stream.on('error', err=>{
+    console.log('error:', err);
+
+    setTimeout( _trackBlockChanges.bind(that, endpoint, io), 1000);
+  });
+
+}
+
+
+
+////////////////////////////////////////////
+
+module.exports = {
+  trackBlockChanges : function(endpoint){
+    console.log(endpoint);
+    var io = createSocket();
+    // _trackBlockChanges('localhost:7053', io);
+    _trackBlockChanges(endpoint, io);
+  }
+};
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function getResponseExample(){
+  return {
+    "Event": "block",
+    "register": null,
+    "block": {
+      "version": 0,
+      "timestamp": null,
+      "transactions": [
+        {
+          "type": "MY_CHAINCODE_TEST",
+          "chaincodeID": {},
+          "payload": {},
+          "metadata": {},
+          "txid": "d6b67c6f-5b77-43aa-8aef-9a528c874016",
+          "timestamp": {
+            "seconds": "1472243595",
+            "nanos": 878832249
+          },
+          "confidentialityLevel": "PUBLIC",
+          "confidentialityProtocolVersion": "",
+          "nonce": {},
+          "toValidators": {},
+          "cert": {},
+          "signature": {}
+        }
+      ],
+      "stateHash": {},
+      "previousBlockHash": {},
+      "consensusMetadata": {},
+      "nonHashData": {
+        "localLedgerCommitTimestamp": {
+          "seconds": "1472243627",
+          "nanos": 376272706
+        },
+        "chaincodeEvents": [
+          {
+            "chaincodeID": "",
+            "txID": "",
+            "eventName": "",
+            "payload": {}
+          }
+        ]
+      }
+    },
+    "chaincodeEvent": null,
+    "rejection": null,
+    "unregister": null
+  }
+}
