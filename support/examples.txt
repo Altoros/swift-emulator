@@ -1,0 +1,4 @@
+
+#create new Payment request
+
+curl -XPOST -d  '{"jsonrpc": "2.0", "method": "invoke", "params": {"type": 1, "chaincodeID": {"name": "'"$HASH"'"}, "ctorMsg": {"args": ["submitPayment", "from", "to", "100", "payment", "contract id", "238498sdf2983...", "{args:'confirm'}", "{args='decline'}"]}, "secureContext": "auditor0", "attributes": ["role", "company"]}, "id": 1}' http://localhost:7050/chaincode

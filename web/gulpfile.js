@@ -280,7 +280,7 @@ function createSocket(){
 function trackBlockChanges(/*endpoint,*/io){
 
   // create grpc endpoint
-  var endpoint = new MyEndpoint('54.198.39.96:7053');
+  var endpoint = new MyEndpoint('localhost:7053');
 
   var stream = endpoint.createChatStream();
   stream.on('data', message=>{
