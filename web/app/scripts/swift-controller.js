@@ -43,13 +43,30 @@ function SwiftController($scope, $log, $interval, PeerService, $rootScope) {
   ctl.reload = function(){
     PeerService.getPayments().then(function(list) {
       ctl.paymentList = list;
+      setTimeout(function() { ctl.onListUpdated(); }, 1000);
     });
   };
 
-//  if($rootScope._timer){
-//    $interval.cancel($rootScope._timer);
-//  }
-//  $rootScope._timer = $interval(ctl.reload, 2000);
+   ctl.onListUpdated = function(){
+        if(ctl.autoconfirm == ctl.CONFIRM_OFF){
+            return
+        }
+        start = ctl.autoconfirm == ctl.CONFIRM_ON ? 0 : 2;
+        for(var t=start;t<ctl.paymentList.length;t++){
+            payment = ctl.paymentList[t];
+            if(!payment.confirm1){
+                ctl.submitBuyer(payment);
+            }
+            if(!payment.confirm2){
+                ctl.submitSeller(payment);
+            }
+        }
+   };
+
+   ctl.onModeChanged = function(mode){
+        ctl.autoconfirm = mode;
+        ctl.onListUpdated();
+   };
 
 
 
@@ -75,6 +92,17 @@ function SwiftController($scope, $log, $interval, PeerService, $rootScope) {
       default: return '';
     }
   };
+
+  ctl.submitBuyer = function(payment){
+    payment.confirm2 = undefined
+    PeerService.confirmTo(payment.id);
+  }
+  ctl.submitSeller = function(payment){
+    payment.confirm1 = undefined
+    PeerService.confirmFrom(payment.id);
+  }
+
+
 
 }
 

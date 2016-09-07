@@ -1,4 +1,11 @@
 
+<div>
+    <blockchain-log> </blockchain-log>
+</div>
+
+
+
+
 <nav class="navbar navbar-default" ng-init="ctl.init()">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -19,9 +26,9 @@
                       <span class="caret"></span>
                   </a>
                   <ul class="dropdown-menu">
-                    <li><a href="#" ng-click="ctl.autoconfirm = ctl.CONFIRM_OFF">{{::ctl.getAutoconfirmLabel(ctl.CONFIRM_OFF)}}</a></li>
-                    <li><a href="#" ng-click="ctl.autoconfirm = ctl.CONFIRM_LIMIT">{{::ctl.getAutoconfirmLabel(ctl.CONFIRM_LIMIT)}}</a></li>
-                    <li><a href="#" ng-click="ctl.autoconfirm = ctl.CONFIRM_ON">{{::ctl.getAutoconfirmLabel(ctl.CONFIRM_ON)}}</a></li>
+                    <li><a href="#" ng-click="ctl.onModeChanged(ctl.CONFIRM_OFF)">{{::ctl.getAutoconfirmLabel(ctl.CONFIRM_OFF)}}</a></li>
+                    <li><a href="#" ng-click="ctl.onModeChanged(ctl.CONFIRM_LIMIT)">{{::ctl.getAutoconfirmLabel(ctl.CONFIRM_LIMIT)}}</a></li>
+                    <li><a href="#" ng-click="ctl.onModeChanged(ctl.CONFIRM_ON)">{{::ctl.getAutoconfirmLabel(ctl.CONFIRM_ON)}}</a></li>
                   </ul>
                 </li>
             </ul>
@@ -31,16 +38,8 @@
     </div>
 </nav>
 
-
-
-<hr />
-<div>
-    <blockchain-log> </blockchain-log>
-</div>
-
-
 <div class="bs-callout bs-callout-info" id="callout-type-b-i-elems" >
-    <h3 class="vertical-text">Payment Orders</h3>
+    <h3 class="vertical-text">Payment Instructions</h3>
 
     <!-- <h2></h2> -->
     <table class="table">
@@ -52,25 +51,25 @@
                 <th>Amount</th>
                 <th>Purpose</th>
                 <th>Payment instructions</th>
-                <th>Actions</th>
+                <th>Confirmation</th>
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="o in ctl.paymentList|filter:ctl.showInList as list track by $index ">
-                <td>{{::$index+1}}</td>
+            <tr ng-repeat="o in ctl.paymentList|filter:ctl.showInList|orderBy:'id*1' as list ">
+                <td>{{::o.id}}</td>
                 <td>{{::o.from}}</td>
                 <td>{{::o.to}}</td>
                 <td>{{::o.amount}}</td>
                 <td>{{::o.purpose}}</td>
                 <td>{{::o.description}}</td>
                 <td class="my-btn-group">
-                    <a href="#" ng-show="o.confirm1===false" class="btn btn-default" ng-click="ctl.submitOnline($index)"><i class="glyphicon glyphicon-ok"></i> Confirm1</a>
-                    <a href="#" ng-if="o.confirm1===true" class="btn btn-link" disabled><i class="glyphicon glyphicon-time"></i> Processing...</a>
-                    <a href="#" ng-if="o.confirm1===undefined" class="btn btn-success" disabled><i class="glyphicon glyphicon-saved"></i> Confirmed</a>
+                    <a href="#" ng-show="o.confirm1===false" class="btn btn-default" ng-click="ctl.submitSeller(o)"><i class="glyphicon glyphicon-ok"></i> Payer</a>
+                    <a href="#" ng-if="o.confirm1===undefined" class="btn btn-link" disabled><i class="glyphicon glyphicon-time"></i> Processing...</a>
+                    <a href="#" ng-if="o.confirm1===true" class="btn btn-success" disabled><i class="glyphicon glyphicon-saved"></i> Confirmed</a>
 
-                    <a href="#" ng-show="o.confirm2===false" class="btn btn-default" ng-click="ctl.submitOnline($index)"><i class="glyphicon glyphicon-ok"></i> Confirm2</a>
-                    <a href="#" ng-if="o.confirm2===true" class="btn btn-link" disabled><i class="glyphicon glyphicon-time"></i> Processing...</a>
-                    <a href="#" ng-if="o.confirm2===undefined" class="btn btn-success" disabled><i class="glyphicon glyphicon-saved"></i> Confirmed</a>
+                    <a href="#" ng-show="o.confirm2===false" class="btn btn-default" ng-click="ctl.submitBuyer(o)"><i class="glyphicon glyphicon-ok"></i> Payee</a>
+                    <a href="#" ng-if="o.confirm2===undefined" class="btn btn-link" disabled><i class="glyphicon glyphicon-time"></i> Processing...</a>
+                    <a href="#" ng-if="o.confirm2===true" class="btn btn-success" disabled><i class="glyphicon glyphicon-saved"></i> Confirmed</a>
                 </td>
             </tr>
 
@@ -95,51 +94,3 @@
 
 
 
-
-
-
-
-
-<!-- -->
-<script type="text/ng-template" id="verify-contract-modal.html">
-    <div class="modal-header">
-        <h3 class="modal-title">Buy Contract</h3>
-    </div>
-    <div class="modal-body">
-
-        <form id="pr_form" class="form-horizontal">
-            <div class="form-group">
-                <label for="from" class="col-sm-2 control-label">From</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="from" placeholder="From" ng-model="pr.from">
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="to" class="col-sm-2 control-label">To</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="to" placeholder="To" ng-model="pr.to">
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="amount" class="col-sm-2 control-label">Amount</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="amount" placeholder="Amount" ng-model="pr.amount">
-                </div>
-            </div>
-
-            <input type="hidden" ng-model="pr.purpose" ng-init="pr.purpose='Payment'">
-
-            <div class="form-group">
-                <label for="description" class="col-sm-2 control-label">Description</label>
-                <div class="col-sm-offset-2 col-sm-10">
-                    <textarea class="form-control" name="description" placeholder="Description" ng-model="pr.description"></textarea>
-                </div>
-            </div>
-        </form>
-
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-primary" type="button" ng-click="ctl.ok(pr)" ng-disabled="pr_form.$invalid">Submit</button>
-        <button class="btn" type="button" ng-click="ctl.cancel()">Cancel</button>
-    </div>
-</script>

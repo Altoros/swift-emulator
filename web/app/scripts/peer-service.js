@@ -14,6 +14,13 @@ function PeerService($log, $q, $http, cfg) {
   };
 
 
+  PeerService.confirmFrom = function(paymentId){
+    return invoke('confirmFrom', [''+paymentId]);
+  };
+  PeerService.confirmTo = function(paymentId){
+    return invoke('confirmTo', [''+paymentId]);
+  };
+
 
   var payload = {
       'jsonrpc': '2.0',

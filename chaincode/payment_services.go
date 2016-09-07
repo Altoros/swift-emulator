@@ -16,8 +16,8 @@ type payment struct {
 	Purpose        string `json:"purpose"`
 	Instructions   string `json:"description"`
 	ChainCodeId    string `json:"chaincode"`
-	PayloadConfirm string `json:"payloadconfirm"`
-	PayloadDecline string `json:"payloaddecline"`
+	PayloadFunction string `json:"payloadFunction"`
+	PayloadArgument string `json:"payloadArgument"`
 	ConfirmFrom    bool `json:"confirm1"`
 	ConfirmTo      bool `json:"confirm2"`
 }
@@ -30,8 +30,8 @@ func (payment_ *payment) readFromRow(row shim.Row) {
 	payment_.Purpose 	 = row.Columns[4].GetString_()
 	payment_.Instructions 	 = row.Columns[5].GetString_()
 	payment_.ChainCodeId 	 = row.Columns[6].GetString_()
-	payment_.PayloadConfirm  = row.Columns[7].GetString_()
-	payment_.PayloadDecline  = row.Columns[8].GetString_()
+	payment_.PayloadFunction = row.Columns[7].GetString_()
+	payment_.PayloadArgument = row.Columns[8].GetString_()
 	payment_.ConfirmFrom 	 = row.Columns[9].GetBool()
 	payment_.ConfirmTo 	 = row.Columns[10].GetBool()
 }
@@ -48,8 +48,8 @@ func (t *PaymentChaincode) initPayments(stub shim.ChaincodeStubInterface) (error
 		&shim.ColumnDefinition{Name: "Purpose", Type: shim.ColumnDefinition_STRING, Key: false},
 		&shim.ColumnDefinition{Name: "Instructions", Type: shim.ColumnDefinition_STRING, Key: false},
 		&shim.ColumnDefinition{Name: "ChainCodeId", Type: shim.ColumnDefinition_STRING, Key: false},
-		&shim.ColumnDefinition{Name: "PayloadConfirm", Type: shim.ColumnDefinition_STRING, Key: false},
-		&shim.ColumnDefinition{Name: "PayloadDecline", Type: shim.ColumnDefinition_STRING, Key: false},
+		&shim.ColumnDefinition{Name: "PayloadFunction", Type: shim.ColumnDefinition_STRING, Key: false},
+		&shim.ColumnDefinition{Name: "PayloadArgument", Type: shim.ColumnDefinition_STRING, Key: false},
 		&shim.ColumnDefinition{Name: "ConfirmFrom", Type: shim.ColumnDefinition_BOOL, Key: false},
 		&shim.ColumnDefinition{Name: "ConfirmTo", Type: shim.ColumnDefinition_BOOL, Key: false},
 	})
@@ -88,8 +88,8 @@ func (t *PaymentChaincode) getPayments(stub shim.ChaincodeStubInterface) ([]paym
 			Purpose:               row.Columns[4].GetString_(),
 			Instructions:          row.Columns[5].GetString_(),
 			ChainCodeId:           row.Columns[6].GetString_(),
-			PayloadConfirm:        row.Columns[7].GetString_(),
-			PayloadDecline:        row.Columns[8].GetString_(),
+			PayloadFunction:       row.Columns[7].GetString_(),
+			PayloadArgument:       row.Columns[8].GetString_(),
 			ConfirmFrom:           row.Columns[9].GetBool(),
 			ConfirmTo:             row.Columns[10].GetBool()}
 
@@ -111,8 +111,8 @@ func (t *PaymentChaincode) createPayment(stub shim.ChaincodeStubInterface, payme
 			&shim.Column{Value: &shim.Column_String_{String_: payment_.Purpose}},
 			&shim.Column{Value: &shim.Column_String_{String_: payment_.Instructions}},
 			&shim.Column{Value: &shim.Column_String_{String_: payment_.ChainCodeId}},
-			&shim.Column{Value: &shim.Column_String_{String_: payment_.PayloadConfirm}},
-			&shim.Column{Value: &shim.Column_String_{String_: payment_.PayloadDecline}},
+			&shim.Column{Value: &shim.Column_String_{String_: payment_.PayloadFunction}},
+			&shim.Column{Value: &shim.Column_String_{String_: payment_.PayloadArgument}},
 			&shim.Column{Value: &shim.Column_Bool{Bool: payment_.ConfirmFrom}},
 			&shim.Column{Value: &shim.Column_Bool{Bool: payment_.ConfirmTo}}},
 	}); !ok {
@@ -134,8 +134,8 @@ func (t *PaymentChaincode) updatePayment(stub shim.ChaincodeStubInterface, payme
 			&shim.Column{Value: &shim.Column_String_{String_: payment_.Purpose}},
 			&shim.Column{Value: &shim.Column_String_{String_: payment_.Instructions}},
 			&shim.Column{Value: &shim.Column_String_{String_: payment_.ChainCodeId}},
-			&shim.Column{Value: &shim.Column_String_{String_: payment_.PayloadConfirm}},
-			&shim.Column{Value: &shim.Column_String_{String_: payment_.PayloadDecline}},
+			&shim.Column{Value: &shim.Column_String_{String_: payment_.PayloadFunction}},
+			&shim.Column{Value: &shim.Column_String_{String_: payment_.PayloadArgument}},
 			&shim.Column{Value: &shim.Column_Bool{Bool: payment_.ConfirmFrom}},
 			&shim.Column{Value: &shim.Column_Bool{Bool: payment_.ConfirmTo}}},
 	}); !ok {

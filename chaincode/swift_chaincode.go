@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"strconv"
 
+	"fmt"
 )
 
 var log = logging.MustGetLogger("swift-emulator")
@@ -55,8 +56,8 @@ func (t *PaymentChaincode) Invoke(stub shim.ChaincodeStubInterface, function str
 		newPayment.Purpose = args[3]
 		newPayment.Instructions = args[4]
 		newPayment.ChainCodeId = args[5]
-		newPayment.PayloadConfirm = args[6]
-		newPayment.PayloadDecline = args[7]
+		newPayment.PayloadFunction = args[6]
+		newPayment.PayloadArgument = args[7]
 
 		newPayment.ConfirmFrom = false
 		newPayment.ConfirmTo = false
@@ -81,6 +82,22 @@ func (t *PaymentChaincode) Invoke(stub shim.ChaincodeStubInterface, function str
 
 		payment.ConfirmFrom = true
 		
+		return t.processPaymentConfirmation(stub, payment)
+
+	} else if function == "confirmTo" {
+		if len(args) != 1 {
+			return nil, errors.New("Incorrect arguments. Expecting paymentId.")
+		}
+
+		// Get all contracts issued by issuerId
+		payment, err := t.getPayment(stub, args[0])
+		if err != nil {
+			log.Error("confirmFrom failed on retrieving payment: " + err.Error())
+			return nil, err
+		}
+
+		payment.ConfirmTo = true
+
 		return t.processPaymentConfirmation(stub, payment)
 
 	} else {
@@ -165,16 +182,19 @@ func (t *PaymentChaincode) processPaymentConfirmation(stub shim.ChaincodeStubInt
 func (t *PaymentChaincode) sendConfirmationToCorrespondingChaincode(stub shim.ChaincodeStubInterface, payment_ payment) (error) {
 	log.Debugf("processPaymentConfirmation called with:%+v", payment_)
 
-	//var test [][]byte
+	var args [][]byte
 
-	//response, err := stub.InvokeChaincode(payment_.ChainCodeId, test)
-	//if err != nil {
-	//	errStr := fmt.Sprintf("Failed to invoke chaincode. Got error: %s", err.Error())
-	//	fmt.Printf(errStr)
-	//	return errors.New(errStr)
-	//}
-	//
-	//log.Debugf("Invoke chaincode successful. Got response %s", string(response))
+	args = append(args, []byte(payment_.PayloadFunction))
+	args = append(args, []byte(payment_.PayloadArgument))
+
+	response, err := stub.InvokeChaincode(payment_.ChainCodeId, args)
+	if err != nil {
+		errStr := fmt.Sprintf("Failed to invoke chaincode. Got error: %s", err.Error())
+		fmt.Printf(errStr)
+		return errors.New(errStr)
+	}
+
+	log.Debugf("Invoke chaincode successful. Got response %s", string(response))
 
 	return nil
 }
@@ -183,6 +203,6 @@ func (t *PaymentChaincode) sendConfirmationToCorrespondingChaincode(stub shim.Ch
 func main() {
 	err := shim.Start(new(PaymentChaincode))
 	if err != nil {
-		log.Critical("Error starting InsuranceFrontingChaincode: %s", err)
+		log.Critical("Error starting SwiftChaincode: %s", err)
 	}
 }
