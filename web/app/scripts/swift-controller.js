@@ -48,7 +48,7 @@ function SwiftController($scope, $log, $interval, PeerService, $rootScope) {
   };
 
    ctl.onListUpdated = function(){
-        if(ctl.autoconfirm == ctl.CONFIRM_OFF){
+        if(ctl.autoconfirm == ctl.CONFIRM_OFF || ctl.paymentList == null){
             return
         }
         start = ctl.autoconfirm == ctl.CONFIRM_ON ? 0 : 2;
