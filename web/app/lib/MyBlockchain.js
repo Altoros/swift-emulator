@@ -316,12 +316,18 @@ return {
             // loans
             Object.keys(me.loan).forEach(function(tid){
               var target = ctrl.nodes[tid] || targetCenter;
+              var tp = {
+                x: target.pos.x,
+                y: target.pos.y,
+              }
               var loan = me.loan[tid];
               if(isAnimated)
-                loan.svg.animate().plot([[me.pos.x, me.pos.y] /*, [targetCenter.pos.x, targetCenter.pos.y]*/ , [target.pos.x, target.pos.y]]);
-              else
-                loan.svg.plot([[me.pos.x, me.pos.y] /*, [targetCenter.pos.x, targetCenter.pos.y]*/ , [target.pos.x, target.pos.y]]);
+                loan.svg.animate().plot([[me.pos.x, me.pos.y] /*, [targetCenter.pos.x, targetCenter.pos.y]*/ , [tp.x, tp.y]]);
                 // loan.svg.animate().plot(['M', me.pos.x, me.pos.y, 'L', target.pos.x, target.pos.y].join(' '));
+
+              else
+                loan.svg.plot([[me.pos.x, me.pos.y] /*, [targetCenter.pos.x, targetCenter.pos.y]*/ , [tp.x, tp.y]]);
+                // loan.svg.plot(['M', me.pos.x, me.pos.y, 'L', target.pos.x, target.pos.y].join(' '));
             });
           });
       }

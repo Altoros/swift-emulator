@@ -145,7 +145,7 @@ module.exports = {
     console.log(endpoint);
     var io = createSocket();
     // _trackBlockChanges('localhost:7053', io);
-    _trackBlockChanges(endpoint, io);
+    // _trackBlockChanges(endpoint, io);
   }
 };
 
