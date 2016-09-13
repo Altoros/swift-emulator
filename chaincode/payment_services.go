@@ -3,130 +3,178 @@ package main
 import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"errors"
-	"strings"
+	"fmt"
+	"strconv"
 )
 
-//issuerId: 'issuer0',
-//id: 'issuer0.2017.6.13.600',
-//principal: 500000,
-//term: 12,
-//maturityDate: '2017.6.13',
-//rate: 600,
-//trigger: 'hurricane 2 FL',
-//state: 'offer'
 
-
-type bond struct {
-	IssuerId       string `json:"issuerId"`
+type payment struct {
 	Id             string `json:"id"`
-	Principal      uint64 `json:"principal"`
-	Term           uint64 `json:"term"`
-	MaturityDate   string `json:"maturityDate"`
-	Rate           uint64 `json:"rate"`
-	Trigger        string `json:"trigger"`
-	State          string `json:"state"`
+	From           string `json:"from"`
+	To             string `json:"to"`
+	Amount         string `json:"amount"`
+	Purpose        string `json:"purpose"`
+	Instructions   string `json:"description"`
+	ChainCodeId    string `json:"chaincode"`
+	PayloadFunction string `json:"payloadFunction"`
+	PayloadArgument string `json:"payloadArgument"`
+	ConfirmFrom    bool `json:"confirm1"`
+	ConfirmTo      bool `json:"confirm2"`
+}
+
+func (payment_ *payment) readFromRow(row shim.Row) {
+	payment_.Id 	         = row.Columns[0].GetString_()
+	payment_.From            = row.Columns[1].GetString_()
+	payment_.To 	         = row.Columns[2].GetString_()
+	payment_.Amount 	 = row.Columns[3].GetString_()
+	payment_.Purpose 	 = row.Columns[4].GetString_()
+	payment_.Instructions 	 = row.Columns[5].GetString_()
+	payment_.ChainCodeId 	 = row.Columns[6].GetString_()
+	payment_.PayloadFunction = row.Columns[7].GetString_()
+	payment_.PayloadArgument = row.Columns[8].GetString_()
+	payment_.ConfirmFrom 	 = row.Columns[9].GetBool()
+	payment_.ConfirmTo 	 = row.Columns[10].GetBool()
 }
 
 
-func (t *BondChaincode) initBonds(stub shim.ChaincodeStubInterface) (error) {
-	// Create bonds table
-	err := stub.CreateTable("Bonds", []*shim.ColumnDefinition{
-		&shim.ColumnDefinition{Name: "IssuerId", Type: shim.ColumnDefinition_STRING, Key: true},
-		&shim.ColumnDefinition{Name: "ID", Type: shim.ColumnDefinition_STRING, Key: true},
-		&shim.ColumnDefinition{Name: "Principal", Type: shim.ColumnDefinition_UINT64, Key: false},
-		&shim.ColumnDefinition{Name: "Term", Type: shim.ColumnDefinition_UINT64, Key: false},
-		&shim.ColumnDefinition{Name: "MaturityDate", Type: shim.ColumnDefinition_STRING, Key: false},
-		&shim.ColumnDefinition{Name: "Rate", Type: shim.ColumnDefinition_UINT64, Key: false},
-		&shim.ColumnDefinition{Name: "Trigger", Type: shim.ColumnDefinition_STRING, Key: false},
-		&shim.ColumnDefinition{Name: "State", Type: shim.ColumnDefinition_STRING, Key: false},
+
+func (t *PaymentChaincode) initPayments(stub shim.ChaincodeStubInterface) (error) {
+	// Create payment table
+	err := stub.CreateTable("payment", []*shim.ColumnDefinition{
+		&shim.ColumnDefinition{Name: "Id", Type: shim.ColumnDefinition_STRING, Key: true},
+		&shim.ColumnDefinition{Name: "From", Type: shim.ColumnDefinition_STRING, Key: false},
+		&shim.ColumnDefinition{Name: "To", Type: shim.ColumnDefinition_STRING, Key: false},
+		&shim.ColumnDefinition{Name: "Amount", Type: shim.ColumnDefinition_STRING, Key: false},
+		&shim.ColumnDefinition{Name: "Purpose", Type: shim.ColumnDefinition_STRING, Key: false},
+		&shim.ColumnDefinition{Name: "Instructions", Type: shim.ColumnDefinition_STRING, Key: false},
+		&shim.ColumnDefinition{Name: "ChainCodeId", Type: shim.ColumnDefinition_STRING, Key: false},
+		&shim.ColumnDefinition{Name: "PayloadFunction", Type: shim.ColumnDefinition_STRING, Key: false},
+		&shim.ColumnDefinition{Name: "PayloadArgument", Type: shim.ColumnDefinition_STRING, Key: false},
+		&shim.ColumnDefinition{Name: "ConfirmFrom", Type: shim.ColumnDefinition_BOOL, Key: false},
+		&shim.ColumnDefinition{Name: "ConfirmTo", Type: shim.ColumnDefinition_BOOL, Key: false},
 	})
 	if err != nil {
-		log.Criticalf("Cannot initialize Bonds")
-		return errors.New("Failed creating Bonds table.")
+		log.Criticalf("Cannot initialize Payments")
+		return errors.New("Failed creating Payment table.")
 	}
+
+	err = stub.PutState("PaymentCounter", []byte(strconv.FormatUint(0, 10)))
+	if err != nil {
+		return err
+	}
+
 
 	return nil
 }
 
-func (t *BondChaincode) getBonds(stub shim.ChaincodeStubInterface, issuerID string) ([]bond, error) {
+func (t *PaymentChaincode) getPayments(stub shim.ChaincodeStubInterface) ([]payment, error) {
 	var columns []shim.Column
-	if issuerID != "" {
-		columnIssuerIDs := shim.Column{Value: &shim.Column_String_{String_: issuerID}}
-		columns = append(columns, columnIssuerIDs)
-	}
 
-	rows, err := stub.GetRows("Bonds", columns)
+	rows, err := stub.GetRows("payment", columns)
 	if err != nil {
-		message := "Failed retrieving bonds. Error: " + err.Error()
+		message := "Failed retrieving payments. Error: " + err.Error()
 		log.Error(message)
 		return nil, errors.New(message)
 	}
 
-	var bonds []bond
+	var payments []payment
 
 	for row := range rows {
-		result := bond{
-			IssuerId:       row.Columns[0].GetString_(),
-			Id:             row.Columns[1].GetString_(),
-			Principal:      row.Columns[2].GetUint64(),
-			Term:           row.Columns[3].GetUint64(),
-			MaturityDate:   row.Columns[4].GetString_(),
-			Rate:           row.Columns[5].GetUint64(),
-			Trigger:        row.Columns[6].GetString_(),
-			State:          row.Columns[7].GetString_()}
+		result := payment{
+			Id:       	       row.Columns[0].GetString_(),
+			From:                  row.Columns[1].GetString_(),
+			To:                    row.Columns[2].GetString_(),
+			Amount:                row.Columns[3].GetString_(),
+			Purpose:               row.Columns[4].GetString_(),
+			Instructions:          row.Columns[5].GetString_(),
+			ChainCodeId:           row.Columns[6].GetString_(),
+			PayloadFunction:       row.Columns[7].GetString_(),
+			PayloadArgument:       row.Columns[8].GetString_(),
+			ConfirmFrom:           row.Columns[9].GetBool(),
+			ConfirmTo:             row.Columns[10].GetBool()}
 
-		log.Debugf("getBonds result includes: %+v", result)
-		bonds = append(bonds, result)
+		log.Debugf("getPayments result includes: %+v", result)
+		payments = append(payments, result)
 	}
 
-	return bonds, nil
+	return payments, nil
 }
 
-func (t *BondChaincode) createBond(stub shim.ChaincodeStubInterface, bond_ bond) ([]byte, error) {
-	//TODO Verify if bond with such id is created already
+func (t *PaymentChaincode) createPayment(stub shim.ChaincodeStubInterface, payment_ payment) ([]byte, error) {
 
-	if ok, err := stub.InsertRow("Bonds", shim.Row{
+	if ok, err := stub.InsertRow("payment", shim.Row{
 		Columns: []*shim.Column{
-			&shim.Column{Value: &shim.Column_String_{String_: bond_.IssuerId}},
-			&shim.Column{Value: &shim.Column_String_{String_: bond_.Id}},
-			&shim.Column{Value: &shim.Column_Uint64{Uint64: bond_.Principal}},
-			&shim.Column{Value: &shim.Column_Uint64{Uint64: bond_.Term}},
-			&shim.Column{Value: &shim.Column_String_{String_: bond_.MaturityDate}},
-			&shim.Column{Value: &shim.Column_Uint64{Uint64: bond_.Rate}},
-			&shim.Column{Value: &shim.Column_String_{String_: bond_.Trigger}},
-			&shim.Column{Value: &shim.Column_String_{String_: bond_.State}}},
+			&shim.Column{Value: &shim.Column_String_{String_: payment_.Id}},
+			&shim.Column{Value: &shim.Column_String_{String_: payment_.From}},
+			&shim.Column{Value: &shim.Column_String_{String_: payment_.To}},
+			&shim.Column{Value: &shim.Column_String_{String_: payment_.Amount}},
+			&shim.Column{Value: &shim.Column_String_{String_: payment_.Purpose}},
+			&shim.Column{Value: &shim.Column_String_{String_: payment_.Instructions}},
+			&shim.Column{Value: &shim.Column_String_{String_: payment_.ChainCodeId}},
+			&shim.Column{Value: &shim.Column_String_{String_: payment_.PayloadFunction}},
+			&shim.Column{Value: &shim.Column_String_{String_: payment_.PayloadArgument}},
+			&shim.Column{Value: &shim.Column_Bool{Bool: payment_.ConfirmFrom}},
+			&shim.Column{Value: &shim.Column_Bool{Bool: payment_.ConfirmTo}}},
 	}); !ok {
-		log.Error("Failed inserting new bond: " + err.Error())
+		log.Error("Failed inserting new payment: " + err.Error())
 		return nil, err
 	}
 
 	return nil, nil
 }
 
-func (t *BondChaincode) couponsPaid(stub shim.ChaincodeStubInterface, issuerId string, bondId string) ([]byte, error) {
-	log.Debugf("couponsPaid called with issuerId:%s, bondId:%s", issuerId, bondId)
+func (t *PaymentChaincode) updatePayment(stub shim.ChaincodeStubInterface, payment_ payment) ([]byte, error) {
 
-	// Get all contracts issued by issuerId
-	contracts, err := t.getIssuerContracts(stub, issuerId)
-	if err != nil {
-		log.Error("couponsPaid failed on retrieving contracts: " + err.Error())
+	if ok, err := stub.ReplaceRow("payment", shim.Row{
+		Columns: []*shim.Column{
+			&shim.Column{Value: &shim.Column_String_{String_: payment_.Id}},
+			&shim.Column{Value: &shim.Column_String_{String_: payment_.From}},
+			&shim.Column{Value: &shim.Column_String_{String_: payment_.To}},
+			&shim.Column{Value: &shim.Column_String_{String_: payment_.Amount}},
+			&shim.Column{Value: &shim.Column_String_{String_: payment_.Purpose}},
+			&shim.Column{Value: &shim.Column_String_{String_: payment_.Instructions}},
+			&shim.Column{Value: &shim.Column_String_{String_: payment_.ChainCodeId}},
+			&shim.Column{Value: &shim.Column_String_{String_: payment_.PayloadFunction}},
+			&shim.Column{Value: &shim.Column_String_{String_: payment_.PayloadArgument}},
+			&shim.Column{Value: &shim.Column_Bool{Bool: payment_.ConfirmFrom}},
+			&shim.Column{Value: &shim.Column_Bool{Bool: payment_.ConfirmTo}}},
+	}); !ok {
+		log.Error("Failed replacing payment: " + err.Error())
 		return nil, err
 	}
+	return nil, nil
+}
 
-	// Iterate over the contracts and increment those that match bondId
-	matchCounter := 0
-	for _, contract_ := range contracts {
-		// "issuer0.2017.6.13.600" expected after trimming a suffix from "issuer0.2017.6.13.600.42"
-		if bondId == contract_.Id[:strings.LastIndex(contract_.Id, ".")] && contract_.State=="active"  {
-			matchCounter++
-			if _, err := t.payContractCoupon(stub, contract_); err != nil {
-				log.Errorf("couponsPaid failed on paying coupon for %s: %s", contract_.Id, err.Error())
-				return nil, err
-			}
-		}
+func (t *PaymentChaincode) archivePayment(stub shim.ChaincodeStubInterface, paymentId string) ([]byte, error) {
+
+	var columns []shim.Column
+	col1 := shim.Column{Value: &shim.Column_String_{String_: paymentId}}
+	columns = append(columns, col1)
+
+	err := stub.DeleteRow("payment", columns)
+	if err != nil {
+		return nil, fmt.Errorf("archivePayment operation failed. %s", err)
 	}
-	log.Debugf("couponsPaid: %d out of %d issued by %s matched %s and were paid",
-		   matchCounter, len(contracts), issuerId, bondId)
 
 	return nil, nil
+}
+
+
+
+func (t *PaymentChaincode) getPayment(stub shim.ChaincodeStubInterface, paymentId string) (payment, error) {
+	var columns []shim.Column
+	col1 := shim.Column{Value: &shim.Column_String_{String_: paymentId}}
+	columns = append(columns, col1)
+
+	row, err := stub.GetRow("payment", columns)
+	if err != nil {
+		message := "Failed retrieving payment ID " + paymentId + ". Error: " + err.Error()
+		log.Error(message)
+		return payment{}, errors.New(message)
+	}
+
+	var result payment
+	result.readFromRow(row)
+	log.Debugf("getPayment result: %+v", result)
+	return result, nil
 }
