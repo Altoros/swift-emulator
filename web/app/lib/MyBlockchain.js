@@ -142,4 +142,192 @@ angular.module('MyBlockchain', [])
       }
 
     }//-controller
-}});
+}})
+
+
+
+
+.directive('blockchainPie', function(){
+
+var nodes_example = {
+  1: {
+    loan:{ 2: {val:500} }
+  },
+  2: {
+    loan: { 3: {val:300} }
+  },
+  3: {
+    loan: { 1: {val:200} }
+  }
+};
+
+return {
+    restrict:'E',
+    replace: true,
+    // scope: true,
+    scope: { size:'='},
+    template: '<div id="drawing"></div>',
+    controllerAs: 'ctl',
+    controller: function($scope, $element, $attrs, $transclude, $rootScope){
+      var ctrl = this;
+      var size = $scope.size = $scope.size || 500;
+      var bgnd_c_center = parseInt(size/2);
+      var bgnd_c_radius = parseInt(0.8 * bgnd_c_center);
+      var bg_border_w = 4;
+      var item_border_w = 3;
+      var item_r = 4;
+
+      ctrl.draw = null;
+      ctrl.nodes = {};
+
+      $element.css({height: size, width:size});
+
+      // create svg drawing
+      ctrl.draw = SVG('drawing');
+      var bgnd_circle = ctrl.draw.circle(2*bgnd_c_radius).attr({
+          'fill-opacity': 0,
+          'stroke-width': bg_border_w,
+          'stroke':'#000'
+        })
+        .move(bgnd_c_center - bgnd_c_radius, bgnd_c_center - bgnd_c_radius);
+
+      update(false);
+      $element.on('click', function(){
+        var targetIds = Object.keys(ctrl.nodes);
+        var tid = targetIds[parseInt(Math.random()*targetIds.length)];
+
+        var loan = {};
+        loan[tid] = {val: 100 + parseInt(Math.random()*900) };
+
+        addNode({id:parseInt(Math.random()*100), loan:loan });
+        _update();
+      });
+      // create image
+      // var image = draw.image('images/background.jpg');
+      // image.size(650, 650).y(-150);
+
+      // create text
+      // var text = draw.text('SVG.JS').move(300, 0);
+      // text.font({
+      //   family: 'Source Sans Pro',
+      //   size: 180,
+      //   anchor: 'middle',
+      //   leading: 1
+      // });
+      // // clip image with text
+      // image.clipWith(text);
+
+
+      function polar(i, n){
+        var a;
+        if(n<=1){
+          a = 0;
+        }else{
+          a = 2*Math.PI*i/n + Math.PI/2;
+        }
+
+        return {
+          x : bgnd_c_center + bgnd_c_radius * Math.sin(a),
+          y : bgnd_c_center - bgnd_c_radius * Math.cos(a)
+        };
+      }
+
+      function polarEntry(){
+        var a = 0;
+        return {
+          x : bgnd_c_center + bgnd_c_radius * Math.sin(a),
+          y : bgnd_c_center - bgnd_c_radius * Math.cos(a)
+        };
+      }
+
+      var targetCenter = {pos:{x:bgnd_c_center, y:bgnd_c_center}};
+
+      function getNodes(){
+        // TODO: hardcoded
+        return Promise.resolve(nodes_example);
+      }
+
+
+      function update(isAnimated){
+        if(typeof isAnimated ==="undefined")
+          isAnimated = true;
+        return getNodes()
+          .then(function(nodes){
+            Object.keys(nodes).forEach(function(id){
+              nodes[id].id = id;
+              addNode(nodes[id]);
+            });
+            _update(isAnimated);
+          });
+      }
+
+      /**
+       *
+       */
+      function addNode(node){
+        if( !ctrl.nodes[node.id] ){
+          ctrl.nodes[node.id] = node;
+
+
+          // body
+          var me = ctrl.nodes[node.id];
+          me.pos = polarEntry();
+          me.svg = ctrl.draw.circle(2*item_r).attr({
+            'stroke-width': item_border_w,
+            'stroke':'#F33'
+          }).move(me.pos.x-item_r, me.pos.y-item_r);
+
+          // loans
+          Object.keys(ctrl.nodes[node.id].loan).forEach(function(tid){
+              var target = ctrl.nodes[tid] || targetCenter;
+              // me.loan[tid].svg = ctrl.draw.path(['M', me.pos.x, me.pos.y, 'L', target.pos.x, target.pos.y].join(' '))
+              me.loan[tid].svg = ctrl.draw.polyline([[me.pos.x, me.pos.y] /*, [targetCenter.pos.x, targetCenter.pos.y]*/, [target.pos.x, target.pos.y]])
+                .back()
+                .attr({
+                  'fill-opacity': 0,
+                  'stroke-width': 3,
+                  'stroke':'#33F'
+                });
+          });
+
+        }
+      }
+
+      // recalc elements position
+      function _update(isAnimated){
+          if(typeof isAnimated ==="undefined")
+            isAnimated = true;
+
+          var n = Object.keys(ctrl.nodes).length;
+          Object.keys(ctrl.nodes).forEach(function(id, i){
+            var me = ctrl.nodes[id];
+            me.pos = polar(i, n);
+
+            // body
+            if(isAnimated)
+              ctrl.nodes[id].svg.animate().move(me.pos.x-item_r, me.pos.y-item_r);
+            else
+              ctrl.nodes[id].svg.move(me.pos.x-item_r, me.pos.y-item_r);
+          });
+
+          Object.keys(ctrl.nodes).forEach(function(id, i){
+            var me = ctrl.nodes[id];
+
+            // loans
+            Object.keys(me.loan).forEach(function(tid){
+              var target = ctrl.nodes[tid] || targetCenter;
+              var loan = me.loan[tid];
+              if(isAnimated)
+                loan.svg.animate().plot([[me.pos.x, me.pos.y] /*, [targetCenter.pos.x, targetCenter.pos.y]*/ , [target.pos.x, target.pos.y]]);
+              else
+                loan.svg.plot([[me.pos.x, me.pos.y] /*, [targetCenter.pos.x, targetCenter.pos.y]*/ , [target.pos.x, target.pos.y]]);
+                // loan.svg.animate().plot(['M', me.pos.x, me.pos.y, 'L', target.pos.x, target.pos.y].join(' '));
+            });
+          });
+      }
+
+
+
+    } // -controller
+  }; // -return
+});
