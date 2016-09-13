@@ -35,6 +35,9 @@ function SwiftController($scope, $log, $interval, /*$uibModal, localStorageServi
 
   ctl.init = function(){
     ctl.reload();
+    $rootScope.$on('chainblock', function(payload){
+      ctl.reload();
+    });
   };
 
   ctl.reload = function(){
@@ -298,6 +301,7 @@ angular.module('swiftController', ['LocalStorageModule'])
 
         socket.on('chainblock', function(payload){
           console.log('server chainblock:', payload);
+          $rootScope.$emit('chainblock', payload);
           addChainblocks(payload);
         });
       };
