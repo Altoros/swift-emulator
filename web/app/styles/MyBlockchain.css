@@ -52,7 +52,7 @@ blockchain-log .block:hover {
 }
 
 blockchain-log #details {
-    margin-bottom: 40px;
+    margin-top: 40px;
 
     background: #222832;
     color: #646B73;
@@ -65,4 +65,32 @@ blockchain-log #details {
     word-break: break-all;
     font-size: 12px;
     z-index: +1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.mybadge:empty,
+.mybadge {
+    height: 10px;
+    width: 10px;
+    display: inline-block !important;
 }

@@ -20,12 +20,13 @@ PaymentOrder : {
 
 
 */
-function SwiftController($scope, $log, $interval, PeerService, $rootScope) {
+function SwiftController($scope, $log, $interval, PeerService, $rootScope, cfg) {
 
     var ctl = this;
     $scope.Math = window.Math;
 
 
+    ctl.filterId = null;
     ctl.nodesData = {};
     ctl.stats = {};
 
@@ -35,6 +36,11 @@ function SwiftController($scope, $log, $interval, PeerService, $rootScope) {
             ctl.reload();
         });
         // var _timer = setInterval(ctl.reload, 5000);
+    };
+
+    ctl.getProtobufEndpoint = function(){
+        var m = cfg.endpoint.match(/\/\/([\w\.]+)[:\/]/);
+        return m?m[1]+':7053':'127.0.0.1:7053';
     };
 
     ctl.reload = function() {

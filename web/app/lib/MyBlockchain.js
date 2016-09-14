@@ -176,14 +176,16 @@ return {
     restrict:'E',
     replace: true,
     // scope: true,
-    scope: { size:'=', data:'='},
-    template: '<div id="drawing">'
+    scope: { size:'=', data:'=', filter:'='},
+    template: '<div id="drawing" class="blockchain-pie">'
               +'<div id="bc_popup_anchor"></div>'
               +'</div>',
     controllerAs: 'ctl',
     controller: function($scope, $element, $attrs, $transclude, $rootScope){
       var ctrl = this;
       var size = $scope.size = $scope.size || 500;
+      // var filter = $scope.filter || null;
+
 
       //
       var bg_border_w = 4;
@@ -266,6 +268,11 @@ return {
       /**
        *
        */
+      $scope.$watch('filter', function(){
+        console.log('Showing for '+$scope.filter);
+        _update();
+      });
+
       $scope.$watch('data', function(){
         console.log('$scope.data');
         console.dir($scope.data);
@@ -477,6 +484,15 @@ return {
             }else{
               ctrl.nodes[id].svg.move(me.pos.x-item_r, me.pos.y-item_r);
             }
+
+
+            // filter
+            if($scope.filter && $scope.filter !== id){
+              me.svg.hide();
+            }else{
+              me.svg.show();
+            }
+
           });
 
 
@@ -487,6 +503,7 @@ return {
 
             Object.keys(me.loan).forEach(function(tid){
               var target = ctrl.nodes[tid] || targetCenter;
+
 
               var tp = {
                 x: target.pos.x,
@@ -504,6 +521,16 @@ return {
                 loan.svg.plot([[me.pos.x, me.pos.y] /*, [targetCenter.pos.x, targetCenter.pos.y]*/ , [tp.x, tp.y]]);
                 // loan.svg.plot(['M', me.pos.x, me.pos.y, 'L', target.pos.x, target.pos.y].join(' '));
               }
+
+              // filter
+              if($scope.filter && $scope.filter !== id){
+                me.loan[tid].svg.hide();
+              }else{
+                me.loan[tid].svg.show();
+                target.svg.show();
+              }
+
+
             });
           });
 
