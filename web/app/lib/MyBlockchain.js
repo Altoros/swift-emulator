@@ -172,7 +172,7 @@ return {
     restrict:'E',
     replace: true,
     // scope: true,
-    scope: { size:'='},
+    scope: { size:'=', data:'='},
     template: '<div id="drawing"></div>',
     controllerAs: 'ctl',
     controller: function($scope, $element, $attrs, $transclude, $rootScope){
@@ -201,7 +201,7 @@ return {
         })
         .move(bgnd_c_center - bgnd_c_radius, bgnd_c_center - bgnd_c_radius);
 
-      update(false);
+      // update(false);
 
       $element.on('click', function(){
         addNode(randomNode());
@@ -222,6 +222,23 @@ return {
 
         return node;
       }
+
+      /**
+       *
+       */
+      $scope.$watch('data', function(){
+        console.log('$scope.data');
+        console.dir($scope.data);
+
+        Object.keys($scope.data).forEach(function(id){
+          if(!ctrl.nodes[id]){
+            addNode($scope.data[id]);
+          }
+        });
+
+        _update();
+
+      });
 
 
       /**
@@ -246,34 +263,35 @@ return {
 
       var targetCenter = {pos:{x:bgnd_c_center, y:bgnd_c_center}};
 
-      function getNodes(){
-        // TODO: hardcoded
-        return Promise.resolve(nodes_example);
-      }
+      // function getNodes(){
+      //   // TODO: hardcoded
+      //   return Promise.resolve(nodes_example);
+      // }
 
-      /**
-       *
-       */
-      function update(isAnimated){
-        if(typeof isAnimated ==='undefined'){
-          isAnimated = true;
-        }
+      // /**
+      //  *
+      //  */
+      // function update(isAnimated){
+      //   if(typeof isAnimated ==='undefined'){
+      //     isAnimated = true;
+      //   }
 
-        return getNodes()
-          .then(function(nodes){
-            Object.keys(nodes).forEach(function(id){
-              nodes[id].id = id;
-              addNode(nodes[id]);
-            });
-            _update(isAnimated);
-          });
-      }
+      //   return getNodes()
+      //     .then(function(nodes){
+      //       Object.keys(nodes).forEach(function(id){
+      //         nodes[id].id = id;
+      //         addNode(nodes[id]);
+      //       });
+      //       _update(isAnimated);
+      //     });
+      // }
 
       /**
        *
        */
       function addNode(node){
         if( !ctrl.nodes[node.id] ){
+          console.log('addNode', node);
           ctrl.nodes[node.id] = node;
 
           var ids = Object.keys(ctrl.nodes);
@@ -285,16 +303,15 @@ return {
 
           me.color = randomColor();
           me.svg = ctrl.draw.circle(2*item_r0).attr({
-            'stroke-width': 1, //item_border_w,
-            // 'stroke':'#F33'
-            'stroke': me.color,
-            'fill': me.color
-          })
-          .move(me.pos.x-item_r0, me.pos.y-item_r0)
-
-          .animate(300, '<')
-          .attr({r:item_r})
-          .move(me.pos.x-item_r, me.pos.y-item_r);
+              'stroke-width': 1, //item_border_w,
+              // 'stroke':'#F33'
+              'stroke': me.color,
+              'fill': me.color
+            })
+            .move(me.pos.x-item_r0, me.pos.y-item_r0)
+            .animate(300, '<')
+            .attr({r:item_r})
+            .move(me.pos.x-item_r, me.pos.y-item_r);
 
           // loans
           Object.keys(ctrl.nodes[node.id].loan).forEach(function(tid){
@@ -309,6 +326,11 @@ return {
                   'stroke': me.color
                 });
           });
+
+
+          // me.svg.on('hover', function(e){
+          //   console.log('hover:', e);
+          // });
 
         }
       }

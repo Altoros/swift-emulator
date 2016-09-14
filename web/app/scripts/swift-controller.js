@@ -24,44 +24,54 @@ function SwiftController($scope, $log, $interval, PeerService, $rootScope) {
 
   var ctl = this;
 
-  //
-  ctl.CONFIRM_OFF = 'off';
-  ctl.CONFIRM_LIMIT = 'limit';
-  ctl.CONFIRM_ON = 'on';
 
-
+  ctl.nodesData = {};
   ctl.paymentList = [];
-  ctl.autoconfirm = ctl.CONFIRM_LIMIT;
 
   ctl.init = function(){
     ctl.reload();
     $rootScope.$on('chainblock', function(payload){
           ctl.reload();
     });
+    var _timer = setInterval(ctl.reload, 5000);
   };
 
   ctl.reload = function(){
-    PeerService.getPayments().then(function(list) {
-      ctl.paymentList = list;
-      setTimeout(function() { ctl.onListUpdated(); }, 1000);
+    return PeerService.getGraph().then(function(list) {
+      console.log('getGraph', list);
+      // // ctl.paymentList = list;
+      // setTimeout(function() { ctl.onListUpdated(); }, 1000);
+      ctl.nodesData = {};
+
+      ctl.nodesData = {};
+      list.Nodes.forEach(function(item){
+        ctl.nodesData[item] = {id:item, loan:{} };
+      });
+
+
     });
   };
 
-   ctl.onListUpdated = function(){
-        if(ctl.autoconfirm == ctl.CONFIRM_OFF || ctl.paymentList == null){
-            return
-        }
-        start = ctl.autoconfirm == ctl.CONFIRM_ON ? 0 : 2;
-        for(var t=start;t<ctl.paymentList.length;t++){
-            payment = ctl.paymentList[t];
-            if(!payment.confirm1){
-                ctl.submitBuyer(payment);
-            }
-            if(!payment.confirm2){
-                ctl.submitSeller(payment);
-            }
-        }
-   };
+  ctl.addCounterParty = function(){
+     PeerService.addCounterParty().then(function(){
+        return ctl.reload();
+     });
+  };
+   // ctl.onListUpdated = function(){
+   //      if(ctl.autoconfirm == ctl.CONFIRM_OFF || ctl.paymentList == null){
+   //          return
+   //      }
+   //      start = ctl.autoconfirm == ctl.CONFIRM_ON ? 0 : 2;
+   //      for(var t=start;t<ctl.paymentList.length;t++){
+   //          payment = ctl.paymentList[t];
+   //          if(!payment.confirm1){
+   //              ctl.submitBuyer(payment);
+   //          }
+   //          if(!payment.confirm2){
+   //              ctl.submitSeller(payment);
+   //          }
+   //      }
+   // };
 
    ctl.onModeChanged = function(mode){
         ctl.autoconfirm = mode;
@@ -72,25 +82,6 @@ function SwiftController($scope, $log, $interval, PeerService, $rootScope) {
 
   ctl.showInList = function(value, index, array){
     return value.confirm1 !== undefined ||  value.confirm2 !== undefined;
-  };
-
-  ctl.getAutoconfirmLabel = function(value){
-    switch(value){
-      case ctl.CONFIRM_OFF: return 'Off';
-      case ctl.CONFIRM_LIMIT: return 'Limit reached';
-      case ctl.CONFIRM_ON: return 'On';
-      default: return 'Unknown';
-    }
-  };
-
-
-  ctl.getAutoconfirmBadge = function(value){
-    switch(value){
-      case ctl.CONFIRM_OFF: return 'badge-default';
-      case ctl.CONFIRM_LIMIT: return 'badge-warning';
-      case ctl.CONFIRM_ON: return 'badge-success';
-      default: return '';
-    }
   };
 
   ctl.submitBuyer = function(payment){

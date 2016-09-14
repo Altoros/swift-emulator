@@ -10,12 +10,16 @@ function PeerService($log, $q, $http, cfg) {
 
 
   // netting
-  PeerService.getStats = function(){
-    return query('Stats', []);
+
+  PeerService.getGraph= function(){
+    return query('Graph', []);
   };
-  PeerService.getClaims = function(uid){
-    return query('Claims', [''+uid]);
-  };
+  // PeerService.getStats = function(){
+  //   return query('Stats', []);
+  // };
+  // PeerService.getClaims = function(uid){
+  //   return query('Claims', [''+uid]);
+  // };
 
   PeerService.addCounterParty = function(){
     return invoke('AddCounterParty', []);

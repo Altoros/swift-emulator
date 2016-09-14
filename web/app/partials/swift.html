@@ -1,6 +1,11 @@
 
-<div>
-    <blockchain-pie></blockchain-pie>
+<div class="row">
+    <blockchain-pie class="col-md-6" data="ctl.nodesData"></blockchain-pie>
+    <div class="col-md-6 pull-right">
+
+    <div class="btn btn-default" ng-click="ctl.addCounterParty()">Add counterparty</div>
+
+    </div>
 </div>
 <div>
     <blockchain-log> </blockchain-log>
@@ -21,23 +26,7 @@
             <a href="#" class="navbar-brand">Brand</a>
         </div>
 
-        <div class="collapse navbar-collapse" id="navbar1">
-            <ul class="nav navbar-nav pull-right">
-                <li class="dropdown" style="width: 275px">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                      Auto confirmation : <span class="badge badge-point" ng-class="ctl.getAutoconfirmBadge(ctl.autoconfirm)"> </span> {{ctl.getAutoconfirmLabel(ctl.autoconfirm)}}
-                      <span class="caret"></span>
-                  </a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#" ng-click="ctl.onModeChanged(ctl.CONFIRM_OFF)">{{::ctl.getAutoconfirmLabel(ctl.CONFIRM_OFF)}}</a></li>
-                    <li><a href="#" ng-click="ctl.onModeChanged(ctl.CONFIRM_LIMIT)">{{::ctl.getAutoconfirmLabel(ctl.CONFIRM_LIMIT)}}</a></li>
-                    <li><a href="#" ng-click="ctl.onModeChanged(ctl.CONFIRM_ON)">{{::ctl.getAutoconfirmLabel(ctl.CONFIRM_ON)}}</a></li>
-                  </ul>
-                </li>
-            </ul>
-          </div>
 
-        </div>
     </div>
 </nav>
 
