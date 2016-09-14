@@ -302,6 +302,7 @@ return {
           }else{
             // Update fields
             ctrl.nodes[node.id].balance = node.balance;
+            node.color = ctrl.nodes[node.id].color;
           }
 
 
@@ -541,4 +542,64 @@ return {
 
     } // -controller
   }; // -return
+})
+
+
+
+
+.directive('freq', function(){
+
+return {
+    restrict:'A',
+    // replace: true,
+    // scope: true,
+    // scope: { size:'=', data:'=', filter:'='},
+    // template: '<div id="drawing" class="blockchain-pie">'
+    //           +'<div id="bc_popup_anchor"></div>'
+    //           +'</div>',
+    // controllerAs: 'ctl',
+    controller: function(/*$scope,*/ $element, $attrs /*, $transclude, $rootScope*/){
+      console.log('FREQ:', $element, $attrs);
+      var freq = parseInt($attrs.freq) || 1000;
+      if(freq<=0){ throw new Error('freq must be positive'); }
+
+      $element.on('click', function(e){
+
+          // e.stopPropagation();
+          // e.preventDefault();
+          // $element.attr('disabled', 'disabled');
+          disableElement();
+          setTimeout(enableElement, freq);
+      });
+      // }, {capture:true});
+
+      // $element.on('click', function(e){
+      //     e.stopPropagation();
+      //     e.preventDefault();
+      //     $element.attr('disabled', 'disabled');
+      // }, {capture:true});
+
+
+      function enableElement(){
+        $element.removeAttr('disabled');
+        $element.parent().get(0).removeEventListener('click', nothing, {capture:true});
+      }
+
+      /**
+       *
+       */
+      function disableElement(){
+        $element.attr('disabled', 'disabled');
+
+        $element.parent().get(0).addEventListener('click', nothing, {capture:true});
+
+      }
+      function nothing(e){
+          e.stopPropagation();
+          e.preventDefault();
+      }
+
+
+    }
+  };
 });

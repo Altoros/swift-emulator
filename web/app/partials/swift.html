@@ -7,13 +7,13 @@
 
         <ul class="nav nav-tabs" role="tablist">
           <li role="presentation" ng-class="!ctl.filterId ?'active':''">
-            <a href="#admin" aria-controls="admin" role="tab" data-toggle="tab" ng-click="ctl.filterId = null">Admin</a>
+            <a href="#admin" aria-controls="admin" role="tab" ng-click="ctl.filterId = null">Admin</a>
           </li>
-          <li role="presentation" ng-class="ctl.filterId ?'active':''">
+          <li role="presentation" ng-class="ctl.filterId ?'active':''" href="#user1">
 
               <a data-toggle="dropdown" role="tab" aria-haspopup="true" aria-expanded="false">
                 <span ng-hide="ctl.filterId">User selection</span>
-                <span ng-show="ctl.filterId">User: {{ctl.filterId*1+1}}</span>
+                <span ng-show="ctl.filterId">User: <span class="badge mybadge" style="background-color: {{ctl.nodesData[ctl.filterId].color}}"></span> {{ctl.filterId*1+1}}</span>
                 <span class="caret"></span>
               </a>
 
@@ -26,33 +26,33 @@
         </ul>
 
         <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="admin">
+            <div role="tabpanel" class="tab-pane" id="admin" ng-class="!ctl.filterId ?'active':''">
 
                 <div class="col-md-12 ">
-                    <span class="btn btn-warning" ng-click="ctl.initDemo()"><i class="glyphicon glyphicon-blackboard"></i> Demo</span>
+                    <span class="btn btn-warning" ng-click="ctl.initDemo()" freq><i class="glyphicon glyphicon-blackboard"></i> Demo</span>
                 </div>
 
                 <div class="col-md-12 ">
-                    <span class="btn btn-primary" ng-click="ctl.addCounterParty()"> <i class="glyphicon glyphicon-plus"></i> Add counterparty</span>
+                    <span class="btn btn-primary" ng-click="ctl.addCounterParty()" freq> <i class="glyphicon glyphicon-plus"></i> Add counterparty</span>
                 </div>
                 <div class="col-md-12 ">
-                    <span class="btn btn-danger" ng-click="ctl.addClaim()"> <i class="glyphicon glyphicon-euro"></i> Add claim</span>
+                    <span class="btn btn-danger" ng-click="ctl.addClaim()" freq> <i class="glyphicon glyphicon-euro"></i> Add claim</span>
                 </div>
                 <div class="col-md-12 ">
-                    <span class="btn btn-warning" ng-click="ctl.runNetting()"><i class="glyphicon glyphicon-resize-small"></i> Run netting</span>
+                    <span class="btn btn-warning" ng-click="ctl.runNetting()" freq><i class="glyphicon glyphicon-resize-small"></i> Run netting</span>
                 </div>
 
                 <hr>
 
                 <div class="col-md-12 ">
-                    <span class="btn btn-default" ng-click="ctl.reload()"><i class="glyphicon glyphicon-refresh"></i> update</span>
+                    <span class="btn btn-default" ng-click="ctl.reload()" freq><i class="glyphicon glyphicon-refresh"></i> update</span>
                 </div>
                 <div class="col-md-12 ">
-                    <span class="btn btn-default" ng-click="ctl.clearNetting()"><i class="glyphicon glyphicon-remove"></i> clear</span>
+                    <span class="btn btn-default" ng-click="ctl.clearNetting()" freq><i class="glyphicon glyphicon-remove"></i> clear</span>
                 </div>
             </div>
 
-            <div role="tabpanel" class="tab-pane" id="user1">
+            <div role="tabpanel" class="tab-pane" id="user1" ng-class="ctl.filterId ?'active':''">
                 <p style="margin-top:40px; margin-left:40px;">
                     <i>Read-only mode</i>
                 </p>
@@ -98,7 +98,7 @@
     </div>
 </nav>
 
-<div class="bs-callout bs-callout-info" id="callout-type-b-i-elems" >
+<div class="bs-callout bs-callout-info" id="callout-type-b-i-elems" hidden>
     <h3 class="vertical-text">Payment Instructions</h3>
 
     <!-- <h2></h2> -->
