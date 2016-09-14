@@ -72,7 +72,7 @@ angular.module('MyBlockchain', [])
       ctl.onClick = function(e){
 
         // demo chaincode!
-        addChainblocks(responseExample);
+        // addChainblocks(responseExample);
       };
 
 
@@ -177,7 +177,9 @@ return {
     replace: true,
     // scope: true,
     scope: { size:'=', data:'='},
-    template: '<div id="drawing"></div>',
+    template: '<div id="drawing">'
+              +'<div id="bc_popup_anchor"></div>'
+              +'</div>',
     controllerAs: 'ctl',
     controller: function($scope, $element, $attrs, $transclude, $rootScope){
       var ctrl = this;
@@ -207,6 +209,37 @@ return {
           'stroke':'#000'
         })
         .move(bgnd_c_center - bgnd_c_radius, bgnd_c_center - bgnd_c_radius);
+
+      /**
+       *
+       */
+      $element.on('mouseover', function(e){
+        if(/*e.target.tagName.toLowerCase() === 'circle' && */ e.target._svg){
+          // console.log('mouseover', e.target._svg.id);
+          showInfo(e.target._svg);
+        }
+      });
+
+      $element.on('mouseout', function(e){
+        // if(e.target === e.currentTarget){
+        if(/*e.target.tagName.toLowerCase() === 'circle' && */ e.target._svg){
+          $('#bc_popup_anchor').tooltip('destroy');
+        }
+      });
+
+      function showInfo(node){
+          // console.log('hovered:', node.id);
+          console.log('balance:', node.balance);
+          var n = Object.keys(node.loan).length;
+          var text = '$&nbsp;'+node.balance + '<br>' + 'Claims:&nbsp;' +n ;
+
+          $('#bc_popup_anchor').css({height:0, width:0, position:'absolute', left: node.pos.x+item_r, top: node.pos.y-item_r })
+          // .tooltip('destroy')
+            .tooltip({title:text, html:true, animation:false}).tooltip('show');
+          // $('svg circle:first').tooltip({title:'test'}).tooltip('show')
+
+
+      }
 
       // update(false);
 
@@ -259,6 +292,9 @@ return {
             addNode(node);
 
           // setTimeout(removeNode.bind(this, node.id), 2000); // DEBUG
+          }else{
+            // Update fields
+            ctrl.nodes[node.id].balance = node.balance;
           }
 
 
@@ -368,28 +404,6 @@ return {
 
       var targetCenter = {pos:{x:bgnd_c_center, y:bgnd_c_center}};
 
-      // function getNodes(){
-      //   // TODO: hardcoded
-      //   return Promise.resolve(nodes_example);
-      // }
-
-      // /**
-      //  *
-      //  */
-      // function update(isAnimated){
-      //   if(typeof isAnimated ==='undefined'){
-      //     isAnimated = true;
-      //   }
-
-      //   return getNodes()
-      //     .then(function(nodes){
-      //       Object.keys(nodes).forEach(function(id){
-      //         nodes[id].id = id;
-      //         addNode(nodes[id]);
-      //       });
-      //       _update(isAnimated);
-      //     });
-      // }
 
       /**
        *
@@ -418,6 +432,10 @@ return {
           me.svg.animate(300, '<')
             .attr({r:item_r})
             .move(me.pos.x-item_r, me.pos.y-item_r);
+
+          me.svg.node._svg = me;
+
+
 
         }
       }

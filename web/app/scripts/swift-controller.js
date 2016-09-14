@@ -53,12 +53,16 @@ function SwiftController($scope, $log, $interval, PeerService, $rootScope) {
 
             ctl.nodesData = {};
             list.Nodes.forEach(function(item) {
-                ctl.nodesData[item] = { id: item, loan: {} };
+                ctl.nodesData[item] = { id: item, loan: {}, balance: 0 };
             });
 
             list.Edges.forEach(function(loan) {
                 ctl.nodesData[loan.f].loan = ctl.nodesData[loan.f].loan || {};
                 ctl.nodesData[loan.f].loan[loan.t] = { val: loan.v };
+
+                // calc balance
+                ctl.nodesData[loan.f].balance += loan.v;
+                ctl.nodesData[loan.t].balance -= loan.v;
             });
 
 
@@ -159,7 +163,7 @@ function SwiftController($scope, $log, $interval, PeerService, $rootScope) {
     };
 
     function _addcp(n){
-        if(--demo_counterparty_count<=0){
+        if(--demo_counterparty_count<0){
             return Promise.resolve();
         }else{
             return PeerService.addCounterParty().then(_addcp);
@@ -168,7 +172,7 @@ function SwiftController($scope, $log, $interval, PeerService, $rootScope) {
 
 
     function _addloans(){
-        if(demo_loans_i >= demo_loans.length-1){
+        if(demo_loans_i > demo_loans.length-1){
             return Promise.resolve();
         }else{
             var claim = demo_loans[demo_loans_i++];
