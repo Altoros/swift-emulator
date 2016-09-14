@@ -9,9 +9,31 @@ function PeerService($log, $q, $http, cfg) {
   var PeerService = this;
 
 
+  // netting
+  PeerService.getStats = function(){
+    return query('Stats', []);
+  };
+  PeerService.getClaims = function(uid){
+    return query('Claims', [""+uid]);
+  };
+
+  PeerService.addCounterParty = function(){
+    return invoke('AddCounterParty', []);
+  };
+  PeerService.addClaim = function(uidFrom, uidTo, value){
+    return invoke('AddClaim', [""+uidFrom, ""+uidTo, ""+value] );
+  };
+  PeerService.runNetting = function(){
+    return invoke('RunNetting', []);
+  };
+
+
+  // swift
   PeerService.getPayments = function(){
     return query('getPayments', []);
   };
+
+
 
 
   PeerService.confirmFrom = function(paymentId){
