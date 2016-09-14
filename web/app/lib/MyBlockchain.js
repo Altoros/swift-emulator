@@ -151,6 +151,7 @@ angular.module('MyBlockchain', [])
 
 var nodes_example = {
   1: {
+    id: 1,
     loan:{ 2: {val:500} }
   },
   2: {
@@ -187,6 +188,8 @@ return {
       var item_r0 = 1;
       var item_r = 15;
 
+      // var _firstrun = true;
+
       ctrl.draw = null;
       ctrl.nodes = {};
 
@@ -203,10 +206,10 @@ return {
 
       // update(false);
 
-      $element.on('click', function(){
-        addNode(randomNode());
-        _update();
-      });
+      // $element.on('click', function(){
+      //   addNode(randomNode());
+      //   _update();
+      // });
 
       function randomNode(){
         var node = {id:parseInt(10+Math.random()*90), loan:{} };
@@ -231,14 +234,81 @@ return {
         console.dir($scope.data);
 
         Object.keys($scope.data).forEach(function(id){
-          if(!ctrl.nodes[id]){
-            addNode($scope.data[id]);
+          var node = $scope.data[id];
+
+
+          // loan
+          var oldLoan = ctrl.nodes[id] ? Object.keys(ctrl.nodes[id].loan) : [];
+          var newLoan = Object.keys(node.loan);
+
+          var toAddLoans = newLoan.filter(function(item){
+            return oldLoan.indexOf(item)<0;
+          });
+          var toDeleteLoans = oldLoan.filter(function(item){
+            return newLoan.indexOf(item)<0;
+          });
+
+
+          // node
+          if(!ctrl.nodes[node.id]){
+            addNode(node);
           }
+
+
+          toAddLoans.forEach(function(item){
+            addLoad(id, item /*, newLoan[item].val*/ );
+          });
+          toDeleteLoans.forEach(function(item){
+            removeLoad(id, item);
+          });
+
+
         });
 
         _update();
 
       });
+
+
+
+      function addLoad(from, to, value){
+          console.log('addLoad', from, to);
+
+          var me = ctrl.nodes[from];
+          me.loan[to] = {
+            val:value,
+            svg: null
+          };
+
+          // svg
+          var target = ctrl.nodes[to] || targetCenter;
+          // me.loan[tid].svg = ctrl.draw.path(['M', me.pos.x, me.pos.y, 'L', target.pos.x, target.pos.y].join(' '))
+          me.loan[to].svg = ctrl.draw.polyline([[me.pos.x, me.pos.y] /*, [targetCenter.pos.x, targetCenter.pos.y]*/, [target.pos.x, target.pos.y]])
+            .back()
+            .attr({
+              // 'fill-opacity': 0.2,
+              'stroke-opacity': 0.7,
+              'stroke-width': 3,
+              'stroke': me.color
+            });
+
+          // setTimeout(removeLoad.bind(this, from, to), 2000); // DEBUG
+      }
+
+
+      /**
+        *
+        */
+      function removeLoad(from, to){
+        console.log('removeLoad', from, to);
+        var node = ctrl.nodes[from];
+
+        // svg
+        var el = node.loan[to].svg;
+        el.animate(700, '>').attr({ 'stroke-opacity': 0.0 }).after(function(){ el.remove() });
+
+        delete node.loan[to];
+      }
 
 
       /**
@@ -313,25 +383,6 @@ return {
             .attr({r:item_r})
             .move(me.pos.x-item_r, me.pos.y-item_r);
 
-          // loans
-          Object.keys(ctrl.nodes[node.id].loan).forEach(function(tid){
-              var target = ctrl.nodes[tid] || targetCenter;
-              // me.loan[tid].svg = ctrl.draw.path(['M', me.pos.x, me.pos.y, 'L', target.pos.x, target.pos.y].join(' '))
-              me.loan[tid].svg = ctrl.draw.polyline([[me.pos.x, me.pos.y] /*, [targetCenter.pos.x, targetCenter.pos.y]*/, [target.pos.x, target.pos.y]])
-                .back()
-                .attr({
-                  // 'fill-opacity': 0.2,
-                  'stroke-opacity': 0.7,
-                  'stroke-width': 3,
-                  'stroke': me.color
-                });
-          });
-
-
-          // me.svg.on('hover', function(e){
-          //   console.log('hover:', e);
-          // });
-
         }
       }
 
@@ -370,6 +421,8 @@ return {
               };
 
               var loan = me.loan[tid];
+              if(!loan.svg) return;
+
               if(isAnimated){
                 loan.svg.animate().plot([[me.pos.x, me.pos.y] /*, [targetCenter.pos.x, targetCenter.pos.y]*/ , [tp.x, tp.y]]);
                 // loan.svg.animate().plot(['M', me.pos.x, me.pos.y, 'L', target.pos.x, target.pos.y].join(' '));
