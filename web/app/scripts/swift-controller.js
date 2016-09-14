@@ -70,12 +70,16 @@ function SwiftController($scope, $log, $interval, PeerService, $rootScope) {
         do {
           from = ids[parseInt(Math.random() * ids.length)];
           to = ids[parseInt(Math.random() * ids.length)];
-        } while ( fuse-->0 &&  (to == from) && !!ctl.nodesData[from].loan[to] );
+          var val =  0.1 + Math.random();
+
+          var val_back = ctl.nodesData[to].loan[from] ? ctl.nodesData[to].loan[from].val : 0;
+
+        } while ( fuse-->0 &&  (to == from) && !!ctl.nodesData[from].loan[to] && val < val_back );
         if(fuse<=0){
           console.warn('addClaim: fuse reached zero');
         }
 
-        PeerService.addClaim(from, to, 0.1 + Math.random() ).then(function() {
+        PeerService.addClaim(from, to, val).then(function() {
             return ctl.reload();
         });
     };

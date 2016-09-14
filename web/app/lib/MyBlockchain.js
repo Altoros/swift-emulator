@@ -220,7 +220,7 @@ return {
           var targetIds = Object.keys(ctrl.nodes);
           var tid = targetIds[parseInt(Math.random()*targetIds.length)];
 
-          node.loan[tid] = {val: 100 + parseInt(Math.random()*900) };
+          node.loan[tid] = {val: 0.1 + Math.random() };
         }
 
         return node;
@@ -259,7 +259,7 @@ return {
 
 
           diff.add.forEach(function(item){
-            addLoan(id, item /*, newLoan[item].val*/ );
+            addLoan(id, item, node.loan[item].val );
           });
           diff.remove.forEach(function(item){
             removeLoan(id, item);

@@ -1,17 +1,30 @@
 
-<div class="row">
+<div class="row my-btn-row">
     <blockchain-pie class="col-md-6" data="ctl.nodesData"></blockchain-pie>
-    <div class="col-md-6 pull-right">
+    <div class="col-md-6 md-pull-right">
 
-    <div class="btn btn-default" ng-click="ctl.addCounterParty()">Add counterparty</div>
-    <div class="btn btn-default" ng-click="ctl.addClaim()">Add claim</div>
-    <div class="btn btn-default" ng-click="ctl.runNetting()">Run netting</div>
+        <div class="col-md-12 ">
+            <span class="btn btn-primary" ng-click="ctl.addCounterParty()"> <i class="glyphicon glyphicon-plus"></i> Add counterparty</span>
+        </div>
+        <div class="col-md-12 ">
+            <span class="btn btn-danger" ng-click="ctl.addClaim()"> <i class="glyphicon glyphicon-euro"></i> Add claim</span>
+        </div>
+        <div class="col-md-12 ">
+            <span class="btn btn-default" ng-click="ctl.runNetting()"><i class="glyphicon glyphicon-resize-small"></i> Run netting</span>
+        </div>
 
-
-    <div class="btn btn-default" ng-click="ctl.reload()">update</div>
+        <div class="col-md-12 ">
+            <span class="btn btn-default" ng-click="ctl.reload()"><i class="glyphicon glyphicon-refresh"></i> update</span>
+        </div>
 
     </div>
+    <br>
 </div>
+<style type="text/css">
+    .my-btn-row{
+
+    }
+</style>
 <div>
     <blockchain-log> </blockchain-log>
 </div>
