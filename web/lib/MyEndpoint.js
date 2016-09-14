@@ -215,7 +215,7 @@ function getResponseExample(){
           "chaincodeID": {},
           "payload": {},
           "metadata": {},
-          "txid": "d6b67c6f-5b77-43aa-8aef-9a528c874016",
+          "txid": "tst-d6b67c6f-5b77-43aa-8aef-9a528c874016",
           "timestamp": {
             "seconds": "1472243595",
             "nanos": 878832249
