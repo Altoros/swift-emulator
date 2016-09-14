@@ -33,7 +33,7 @@ function SwiftController($scope, $log, $interval, PeerService, $rootScope) {
         $rootScope.$on('chainblock', function(payload) {
             ctl.reload();
         });
-        var _timer = setInterval(ctl.reload, 5000);
+        // var _timer = setInterval(ctl.reload, 5000);
     };
 
     ctl.reload = function() {
@@ -66,11 +66,14 @@ function SwiftController($scope, $log, $interval, PeerService, $rootScope) {
     ctl.addClaim = function() {
         var ids = Object.keys(ctl.nodesData);
 
-        var from = ids[parseInt(Math.random() * ids.length)];
-        var to, fuse = 100;
+        var from, to, fuse = 100;
         do {
-            to = ids[parseInt(Math.random() * ids.length)];
-        }while (fuse-- > 0 && !to && to*1 == from*1 /*&& !ctl.nodesData[from].loan[to] */);
+          from = ids[parseInt(Math.random() * ids.length)];
+          to = ids[parseInt(Math.random() * ids.length)];
+        } while ( fuse-->0 &&  (to == from) && !!ctl.nodesData[from].loan[to] );
+        if(fuse<=0){
+          console.warn('addClaim: fuse reached zero');
+        }
 
         PeerService.addClaim(from, to, 0.1 + Math.random() ).then(function() {
             return ctl.reload();
@@ -78,18 +81,11 @@ function SwiftController($scope, $log, $interval, PeerService, $rootScope) {
     };
 
 
-    ctl.showInList = function(value, index, array) {
-        return value.confirm1 !== undefined || value.confirm2 !== undefined;
+    ctl.runNetting = function(){
+      PeerService.runNetting().then().then(function() {
+            return ctl.reload();
+      });
     };
-
-    ctl.submitBuyer = function(payment) {
-        payment.confirm2 = undefined
-        PeerService.confirmTo(payment.id);
-    }
-    ctl.submitSeller = function(payment) {
-        payment.confirm1 = undefined
-        PeerService.confirmFrom(payment.id);
-    }
 
 
 

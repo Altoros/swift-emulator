@@ -64,14 +64,14 @@ function PeerService($log, $q, $http, cfg) {
 
 
   var invoke = function(functionName, functionArgs) {
-    $log.debug('PeerService.invoke');
+    $log.debug('PeerService.invoke: '+functionName);
 
     payload.method = 'invoke';
 //    payload.params.ctorMsg['function'] = functionName;
     payload.params.ctorMsg.args = encodeToBase64(functionName, functionArgs);
     payload.params.secureContext = cfg.secureContext;
 
-    $log.debug('payload', payload);
+    $log.debug('invoke payload', payload);
 
     return $http.post(cfg.endpoint, angular.copy(payload)).then(function(data) {
       $log.debug('result', data.data.result);
@@ -79,7 +79,7 @@ function PeerService($log, $q, $http, cfg) {
   };
 
   var query = function(functionName, functionArgs) {
-    $log.debug('PeerService.query');
+    $log.debug('PeerService.query: '+functionName);
 
     var d = $q.defer();
 
@@ -89,7 +89,7 @@ function PeerService($log, $q, $http, cfg) {
     payload.params.secureContext = cfg.secureContext;
 
 
-    $log.debug('payload', payload);
+    $log.debug('query payload', payload);
 
     $http.post(cfg.endpoint, angular.copy(payload)).then(function(res) {
       // $log.debug('result', res.data.result);
