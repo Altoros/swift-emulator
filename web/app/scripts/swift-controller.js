@@ -70,7 +70,7 @@ function SwiftController($scope, $log, $interval, PeerService, $rootScope) {
         var to, fuse = 100;
         do {
             to = ids[parseInt(Math.random() * ids.length)];
-        }while (fuse-- > 0 && !to && to*1 == from*1 );
+        }while (fuse-- > 0 && !to && to*1 == from*1 /*&& !ctl.nodesData[from].loan[to] */);
 
         PeerService.addClaim(from, to, 0.1 + Math.random() ).then(function() {
             return ctl.reload();

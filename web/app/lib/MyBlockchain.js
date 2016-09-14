@@ -233,6 +233,13 @@ return {
         console.log('$scope.data');
         console.dir($scope.data);
 
+        var oldNodes = Object.keys(ctrl.nodes);
+        var newNodes = Object.keys($scope.data);
+        var nodesDiff = _diff(oldNodes, newNodes);
+
+        // nodesDiff.add.forEach(function(id){ addNode($scope.data[id]); });
+        nodesDiff.add.forEach(removeNode);
+
         Object.keys($scope.data).forEach(function(id){
           var node = $scope.data[id];
 
@@ -241,25 +248,21 @@ return {
           var oldLoan = ctrl.nodes[id] ? Object.keys(ctrl.nodes[id].loan) : [];
           var newLoan = Object.keys(node.loan);
 
-          var toAddLoans = newLoan.filter(function(item){
-            return oldLoan.indexOf(item)<0;
-          });
-          var toDeleteLoans = oldLoan.filter(function(item){
-            return newLoan.indexOf(item)<0;
-          });
-
+          var diff = _diff(oldLoan, newLoan);
 
           // node
           if(!ctrl.nodes[node.id]){
             addNode(node);
+
+          // setTimeout(removeNode.bind(this, node.id), 2000); // DEBUG
           }
 
 
-          toAddLoans.forEach(function(item){
-            addLoad(id, item /*, newLoan[item].val*/ );
+          diff.add.forEach(function(item){
+            addLoan(id, item /*, newLoan[item].val*/ );
           });
-          toDeleteLoans.forEach(function(item){
-            removeLoad(id, item);
+          diff.remove.forEach(function(item){
+            removeLoan(id, item);
           });
 
 
@@ -270,9 +273,17 @@ return {
       });
 
 
+      function _diff(from, to){
+          return {
+              add: to.filter(function(item){ return from.indexOf(item)<0; }),
+              remove:  from.filter(function(item){ return to.indexOf(item)<0; })
+          };
+      }
 
-      function addLoad(from, to, value){
-          console.log('addLoad', from, to);
+
+
+      function addLoan(from, to, value){
+          console.log('addLoan', from, to);
 
           var me = ctrl.nodes[from];
           me.loan[to] = {
@@ -292,22 +303,27 @@ return {
               'stroke': me.color
             });
 
-          // setTimeout(removeLoad.bind(this, from, to), 2000); // DEBUG
+          // setTimeout(removeLoan.bind(this, from, to), 2000); // DEBUG
       }
 
 
       /**
         *
         */
-      function removeLoad(from, to){
-        console.log('removeLoad', from, to);
+      function removeLoan(from, to){
+        console.log('removeLoan', from, to);
         var node = ctrl.nodes[from];
 
         // svg
-        var el = node.loan[to].svg;
-        el.animate(700, '>').attr({ 'stroke-opacity': 0.0 }).after(function(){ el.remove() });
+        _animateRemove( node.loan[to].svg, function(){
+          delete node.loan[to];
+        });
 
-        delete node.loan[to];
+      }
+
+      function _animateRemove(svgElement, cb){
+        svgElement.animate().attr({'stroke':'#F00', 'fill':'#F00'}).delay(2000)
+          .animate(700, '>').attr({ 'stroke-opacity': 0.0 }).after(function(){ svgElement.remove(); cb && cb(); });
       }
 
 
@@ -386,8 +402,23 @@ return {
         }
       }
 
+      /**
+       *
+       */
+      function removeNode(id){
+        var node = ctrl.nodes[id];
+        if(node){
 
-      // recalc elements position
+          // svg
+          _animateRemove(node.svg, function(){
+            delete ctrl.nodes[id];
+          });
+
+        }
+      }
+
+
+      // recalculate elements position
       function _update(isAnimated){
           if(typeof isAnimated === 'undefined'){
             isAnimated = true;
