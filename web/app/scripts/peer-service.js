@@ -14,14 +14,14 @@ function PeerService($log, $q, $http, cfg) {
     return query('Stats', []);
   };
   PeerService.getClaims = function(uid){
-    return query('Claims', [""+uid]);
+    return query('Claims', [''+uid]);
   };
 
   PeerService.addCounterParty = function(){
     return invoke('AddCounterParty', []);
   };
   PeerService.addClaim = function(uidFrom, uidTo, value){
-    return invoke('AddClaim', [""+uidFrom, ""+uidTo, ""+value] );
+    return invoke('AddClaim', [''+uidFrom, ''+uidTo, ''+value] );
   };
   PeerService.runNetting = function(){
     return invoke('RunNetting', []);

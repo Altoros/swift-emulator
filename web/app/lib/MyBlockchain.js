@@ -178,6 +178,8 @@ return {
     controller: function($scope, $element, $attrs, $transclude, $rootScope){
       var ctrl = this;
       var size = $scope.size = $scope.size || 500;
+
+      //
       var bgnd_c_center = parseInt(size/2);
       var bgnd_c_radius = parseInt(0.8 * bgnd_c_center);
       var bg_border_w = 4;
@@ -202,29 +204,25 @@ return {
       update(false);
 
       $element.on('click', function(){
-        var targetIds = Object.keys(ctrl.nodes);
-        var tid = targetIds[parseInt(Math.random()*targetIds.length)];
-
-        var loan = {};
-        loan[tid] = {val: 100 + parseInt(Math.random()*900) };
-
-        addNode({id:parseInt(10+Math.random()*90), loan:loan });
+        addNode(randomNode());
         _update();
       });
-      // create image
-      // var image = draw.image('images/background.jpg');
-      // image.size(650, 650).y(-150);
 
-      // create text
-      // var text = draw.text('SVG.JS').move(300, 0);
-      // text.font({
-      //   family: 'Source Sans Pro',
-      //   size: 180,
-      //   anchor: 'middle',
-      //   leading: 1
-      // });
-      // // clip image with text
-      // image.clipWith(text);
+      function randomNode(){
+        var node = {id:parseInt(10+Math.random()*90), loan:{} };
+
+        var loanCount = parseInt(1 + Math.random() * Object.keys(ctrl.nodes).length / 3); // maximum 1/3 of all nodes
+        while(loanCount-->0){
+          // loan
+          var targetIds = Object.keys(ctrl.nodes);
+          var tid = targetIds[parseInt(Math.random()*targetIds.length)];
+
+          node.loan[tid] = {val: 100 + parseInt(Math.random()*900) };
+        }
+
+        return node;
+      }
+
 
       /**
        *
@@ -243,16 +241,6 @@ return {
         };
       }
 
-      /**
-       *
-      //  */
-      // function polarEntry(){
-      //   var a = 0;
-      //   return {
-      //     x : bgnd_c_center + bgnd_c_radius * Math.sin(a),
-      //     y : bgnd_c_center - bgnd_c_radius * Math.cos(a)
-      //   };
-      // }
 
 
 
