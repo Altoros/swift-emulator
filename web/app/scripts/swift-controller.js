@@ -91,6 +91,10 @@ function SwiftController($scope, $log, $interval, PeerService, $rootScope) {
         });
     };
 
+    ctl.clearNetting = function(){
+        PeerService.clearNetting();
+    };
+
 
     var demo_counterparty_count = 10;
     var demo_loans_i = 0;

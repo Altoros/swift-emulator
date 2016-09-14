@@ -14,9 +14,9 @@ function PeerService($log, $q, $http, cfg) {
   PeerService.getGraph= function(){
     return query('Graph', []);
   };
-  // PeerService.getStats = function(){
-  //   return query('Stats', []);
-  // };
+  PeerService.getStats = function(){
+    return query('Stats', []);
+  };
   // PeerService.getClaims = function(uid){
   //   return query('Claims', [''+uid]);
   // };
@@ -29,6 +29,9 @@ function PeerService($log, $q, $http, cfg) {
   };
   PeerService.runNetting = function(){
     return invoke('RunNetting', []);
+  };
+  PeerService.clearNetting = function(){
+    return invoke('Clear', []);
   };
 
 

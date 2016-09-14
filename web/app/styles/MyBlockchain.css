@@ -52,6 +52,8 @@ blockchain-log .block:hover {
 }
 
 blockchain-log #details {
+    margin-bottom: 40px;
+
     background: #222832;
     color: #646B73;
     /*display: none;*/

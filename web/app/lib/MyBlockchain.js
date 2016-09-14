@@ -192,7 +192,7 @@ return {
       var bgnd_c_center = parseInt(size/2);
       var bgnd_c_radius = parseInt(bgnd_c_center-4*item_r);
 
-      // var _firstrun = true;
+      var _firstrun = true;
 
       ctrl.draw = null;
       ctrl.nodes = {};
@@ -304,8 +304,12 @@ return {
               // 'fill-opacity': 0.2,
               'stroke-opacity': 0.7,
               'stroke-width': 3,
+              // 'stroke': _firstrun ? me.color : '#0F0'
               'stroke': me.color
-            });
+            })
+            // if(!_firstrun){
+            //   me.loan[to].svg.animate().attr({'stroke': me.color});
+            // }
 
           // setTimeout(removeLoan.bind(this, from, to), 2000); // DEBUG
       }
@@ -326,7 +330,7 @@ return {
       }
 
       function _animateRemove(svgElement, cb){
-        svgElement.animate().attr({'stroke':'#F00', 'fill':'#F00'}).delay(2000)
+        svgElement.animate().attr({'stroke':'#F00', 'fill':'#F00', 'stroke-width':4}).delay(2000)
           .animate(700, '>').attr({ 'stroke-opacity': 0.0 }).after(function(){ svgElement.remove(); cb && cb(); });
       }
 
@@ -398,8 +402,9 @@ return {
               'stroke': me.color,
               'fill': me.color
             })
-            .move(me.pos.x-item_r0, me.pos.y-item_r0)
-            .animate(300, '<')
+            .move(me.pos.x-item_r0, me.pos.y-item_r0);
+
+          me.svg.animate(300, '<')
             .attr({r:item_r})
             .move(me.pos.x-item_r, me.pos.y-item_r);
 
@@ -425,7 +430,7 @@ return {
       // recalculate elements position
       function _update(isAnimated){
           if(typeof isAnimated === 'undefined'){
-            isAnimated = true;
+            isAnimated = !_firstrun;
           }
 
           var n = Object.keys(ctrl.nodes).length;
@@ -468,6 +473,8 @@ return {
               }
             });
           });
+
+          _firstrun = false;
       }
 
 
