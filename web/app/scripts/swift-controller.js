@@ -23,10 +23,11 @@ PaymentOrder : {
 function SwiftController($scope, $log, $interval, PeerService, $rootScope) {
 
     var ctl = this;
+    $scope.Math = window.Math;
 
 
     ctl.nodesData = {};
-    ctl.paymentList = [];
+    ctl.stats = {};
 
     ctl.init = function() {
         ctl.reload();
@@ -37,9 +38,16 @@ function SwiftController($scope, $log, $interval, PeerService, $rootScope) {
     };
 
     ctl.reload = function() {
+
+        PeerService.getStats().then(function(list){
+            console.log('getStats', list);
+            ctl.stats = list;
+        });
+
+
         return PeerService.getGraph().then(function(list) {
             console.log('getGraph', list);
-            // // ctl.paymentList = list;
+
             // setTimeout(function() { ctl.onListUpdated(); }, 1000);
             ctl.nodesData = {};
 
