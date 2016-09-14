@@ -242,7 +242,7 @@ return {
         var nodesDiff = _diff(oldNodes, newNodes);
 
         // nodesDiff.add.forEach(function(id){ addNode($scope.data[id]); });
-        nodesDiff.add.forEach(removeNode);
+        nodesDiff.remove.forEach(removeNode);
 
         Object.keys($scope.data).forEach(function(id){
           var node = $scope.data[id];
@@ -262,11 +262,11 @@ return {
           }
 
 
-          diff.add.forEach(function(item){
-            addLoan(id, item, node.loan[item].val );
+          diff.add.forEach(function(to){
+            addLoan(id, to, node.loan[to].val );
           });
-          diff.remove.forEach(function(item){
-            removeLoan(id, item);
+          diff.remove.forEach(function(to){
+            removeLoan(id, to);
           });
 
 
@@ -330,8 +330,19 @@ return {
       }
 
       function _animateRemove(svgElement, cb){
-        svgElement.animate().attr({'stroke':'#F00', 'fill':'#F00', 'stroke-width':4}).delay(2000)
-          .animate(700, '>').attr({ 'stroke-opacity': 0.0 }).after(function(){ svgElement.remove(); cb && cb(); });
+
+
+        var fx = svgElement
+          .animate()
+          .attr({'stroke':'#F00', 'fill':'#F00', 'stroke-width':4})
+          .delay(2000)
+          .animate(700, '>')
+          .attr({ 'stroke-opacity': 0.0 });
+
+        if( svgElement instanceof SVG.Circle){
+          fx = fx.attr({r:item_r0});
+        }
+        fx.after(function(){ svgElement.remove(); cb && cb(); });
       }
 
 
@@ -417,6 +428,10 @@ return {
       function removeNode(id){
         var node = ctrl.nodes[id];
         if(node){
+
+          Object.keys(node.loan).forEach(function(to){
+            removeLoan(id, to);
+          });
 
           // svg
           _animateRemove(node.svg, function(){
