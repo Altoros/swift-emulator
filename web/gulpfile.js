@@ -98,7 +98,8 @@ gulp.task('serve', [], function () {
     notify: false,
     logPrefix: 'gulp serve',
     server: {baseDir: 'app', index: 'app.html'},
-    port: 8103
+    // port: process.env.PORT || 80
+    port: process.env.GULP_PORT || 80
   });
 
   // listen protobuf socket
