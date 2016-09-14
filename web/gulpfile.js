@@ -102,7 +102,7 @@ gulp.task('serve', [], function () {
   });
 
   // listen protobuf socket
-  MyEndpoint.trackBlockChanges('localhost:7053');
+  MyEndpoint.trackBlockChanges();
 
   //gulp.watch(['app/**.html'], reload);*/
   gulp.watch(['app/app.html'], reload);

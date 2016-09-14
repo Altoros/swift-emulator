@@ -17,6 +17,8 @@ var EventType = protos.EventType;
  *
  */
 function MyEndpoint(endpoint/*, credentials */){
+  console.log('MyEndpoint', endpoint);
+
   var self = this;
 
   var _ep = endpoint;
@@ -24,6 +26,7 @@ function MyEndpoint(endpoint/*, credentials */){
 
   self.createChatStream = createChatStream;
 
+  self.getEndpoint = function(){ return _ep; };
 
   /**
    *
@@ -74,6 +77,45 @@ function MyEndpoint(endpoint/*, credentials */){
 
 
 
+var myEndpoint = null;
+var stream = null;
+var _timer = null;
+
+/**
+ *
+ */
+function _createChannelToBlockchain(endpoint, _io){
+  var that = this;
+  if(myEndpoint && myEndpoint.getEndpoint() === endpoint) {
+    return myEndpoint;
+  }
+
+  if(stream){
+    stream.end();
+    stream = null;
+    clearTimeout(_timer);
+  }
+
+  // create grpc endpoint
+  myEndpoint = new MyEndpoint(endpoint);
+
+  stream = myEndpoint.createChatStream();
+  stream.on('data', message=>{
+    console.log('data:', message);
+    if(message.block){
+      _io.emit('chainblock', message);
+    }
+  });
+  stream.on('error', err=>{
+    console.log('error:', err);
+    // stream.close();
+    myEndpoint = null;
+    _timer = setTimeout( _createChannelToBlockchain.bind(that, endpoint, _io), 1000);
+  });
+
+}
+
+
 
 /**
  *
@@ -94,6 +136,12 @@ function createSocket(){
     socket.emit('hello', 'Hi user!');
     socket.on('hello',  function(payload) {
       console.log('[io] client hello:', payload);
+    });
+
+    socket.on('endpoint',  function(endpoint) {
+      console.log('[io] client endpoint:', endpoint);
+
+      _createChannelToBlockchain(endpoint, io);
     });
 
     socket.on('disconnect', function(socket){
@@ -138,11 +186,12 @@ function _trackBlockChanges(endpoint, io){
 
 
 
+
+
 ////////////////////////////////////////////
 
 module.exports = {
-  trackBlockChanges : function(endpoint){
-    console.log(endpoint);
+  trackBlockChanges : function(/*endpoint*/){
     var io = createSocket();
     // _trackBlockChanges('localhost:7053', io);
     // _trackBlockChanges(endpoint, io);

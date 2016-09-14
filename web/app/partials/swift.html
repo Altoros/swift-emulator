@@ -1,7 +1,11 @@
 
 <div class="row my-btn-row">
-    <blockchain-pie class="col-md-6" data="ctl.nodesData"></blockchain-pie>
+    <blockchain-pie class="col-md-6" data="ctl.nodesData" size="500"></blockchain-pie>
     <div class="col-md-6 md-pull-right">
+
+        <div class="col-md-12 ">
+            <span class="btn btn-warning" ng-click="ctl.initDemo()"><i class="glyphicon glyphicon-resize-small"></i> Demo</span>
+        </div>
 
         <div class="col-md-12 ">
             <span class="btn btn-primary" ng-click="ctl.addCounterParty()"> <i class="glyphicon glyphicon-plus"></i> Add counterparty</span>
@@ -21,12 +25,13 @@
     <br>
 </div>
 <style type="text/css">
-    .my-btn-row{
-
+    .my-btn-row .col-md-12{
+        display: inline-block;
+        margin-bottom: 15px;
     }
 </style>
 <div>
-    <blockchain-log> </blockchain-log>
+    <blockchain-log endpoint="172.16.32.21:7053"> </blockchain-log>
 </div>
 
 

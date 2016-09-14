@@ -8,7 +8,8 @@ angular.module('MyBlockchain', [])
   return {
     restrict:'E',
     replace: false,
-    scope: true,
+    // scope: true,
+    scope: { ep:'@', endpoint:'@'},
     // scope: { name:'=', id:'=' },
     template: '<div class="bc-wrapper" id="footerWrap" ng-init="ctl.init()" d-ng-click="ctl.onClick($event)">'
                 +'<div id="bc-wrapper-block">'
@@ -35,6 +36,7 @@ angular.module('MyBlockchain', [])
     controllerAs: 'ctl',
     controller: function($scope, $element, $attrs, $transclude, $rootScope){
       var ctl = this;
+      var endpoint = $scope.ep || $scope.endpoint || '127.0.0.1:7053';
 
       var clicked=false;
       var blockCount = 0;
@@ -52,6 +54,7 @@ angular.module('MyBlockchain', [])
       ctl.init = function(){
         var socket = io('ws://'+location.hostname+':8155/');
         socket.emit('hello', 'Hi from client');
+        socket.emit('endpoint', endpoint);
 
         socket.on('hello', function(payload){
           console.log('server hello:', payload);
@@ -181,12 +184,13 @@ return {
       var size = $scope.size = $scope.size || 500;
 
       //
-      var bgnd_c_center = parseInt(size/2);
-      var bgnd_c_radius = parseInt(0.8 * bgnd_c_center);
       var bg_border_w = 4;
       // var item_border_w = 3;
       var item_r0 = 1;
       var item_r = 15;
+
+      var bgnd_c_center = parseInt(size/2);
+      var bgnd_c_radius = parseInt(bgnd_c_center-4*item_r);
 
       // var _firstrun = true;
 
