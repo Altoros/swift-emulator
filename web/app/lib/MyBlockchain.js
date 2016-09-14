@@ -182,6 +182,7 @@ return {
       var bgnd_c_radius = parseInt(0.8 * bgnd_c_center);
       var bg_border_w = 4;
       // var item_border_w = 3;
+      var item_r0 = 1;
       var item_r = 15;
 
       ctrl.draw = null;
@@ -295,12 +296,16 @@ return {
           me.pos = polar(ids.indexOf(""+node.id), ids.length);
 
           me.color = randomColor();
-          me.svg = ctrl.draw.circle(2*item_r).attr({
+          me.svg = ctrl.draw.circle(2*item_r0).attr({
             'stroke-width': 1, //item_border_w,
             // 'stroke':'#F33'
             'stroke': me.color,
             'fill': me.color
           })
+          .move(me.pos.x-item_r0, me.pos.y-item_r0)
+
+          .animate(300, '<')
+          .attr({r:item_r})
           .move(me.pos.x-item_r, me.pos.y-item_r);
 
           // loans
