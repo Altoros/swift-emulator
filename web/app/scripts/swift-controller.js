@@ -74,7 +74,7 @@ function SwiftController($scope, $log, $interval, PeerService, $rootScope) {
 
             var val_back = ctl.nodesData[to].loan[from] ? ctl.nodesData[to].loan[from].val : 0;
 
-        } while (fuse-- > 0 && (to == from) && !!ctl.nodesData[from].loan[to] && val < val_back);
+        } while (fuse-- > 0 && ( (to == from) || !!ctl.nodesData[from].loan[to] || val < val_back) );
         if (fuse <= 0) {
             console.warn('addClaim: fuse reached zero');
         }
