@@ -42,11 +42,12 @@ peer network login investor1 -p b7pmSxzKNFiw
 peer network login investor0 -p YsWZD4qQmYxo
 peer network login issuer1 -p W8G0usrU7jRk
 peer network login issuer0 -p H80SiB5ODKKQ
-peer network login offlineServices -p H80SiB5ODKKQ
+peer network login swift -p soiew0923408
+peer network login system -p sSfjw392fe24
 echo "Deploying chaincode..."
 
 #OUTPUT="$(peer chaincode deploy -p github.com/olegabu/catbond/chaincode -c '{"Args": ["aW5pdA=="]}' -u auditor0)"
-OUTPUT="$(curl -XPOST -d  '{"jsonrpc": "2.0", "method": "deploy",  "params": {"type": 1,"chaincodeID": {"path": "github.com/Altoros/swift-emulator/chaincode","language": "GOLANG"}, "ctorMsg": { "args": ["init"] },"secureContext": "auditor0", "attributes": ["role", "company"]},"id": 0}' http://localhost:7050/chaincode)"
+OUTPUT="$(curl -XPOST -d  '{"jsonrpc": "2.0", "method": "deploy",  "params": {"type": 1,"chaincodeID": {"path": "github.com/Altoros/swift-emulator/chaincode","language": "GOLANG"}, "ctorMsg": { "args": ["init"] },"secureContext": "swift", "attributes": ["role"]},"id": 0}' http://localhost:7050/chaincode)"
 #sudo apt-get install jq
 OUTPUT="$(echo $OUTPUT | jq '.result.message')"
 

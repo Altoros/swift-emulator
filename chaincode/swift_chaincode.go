@@ -37,6 +37,13 @@ func (t *PaymentChaincode) Invoke(stub shim.ChaincodeStubInterface, function str
 
 	// Handle different functions
 	if function == "submitPayment" {
+
+		//TODO: uncomment code below when SecurityContext will be propagated in cross chaincode requests
+		//access := t.checkCallerRole(stub, []string{"issuer", "investor"})
+		//if(!access){
+		//	return nil, errors.New("Caller without role 'issuer' or 'investor' cannot execute  'submitPayment' command")
+		//}
+
 		if len(args) != 8 {
 			return nil, errors.New("Incorrect arguments. Expecting From, To, Amount, purpose, Payment Instruction, chaincodeId, payloadConfirm and payloadDecline.")
 		}
@@ -69,6 +76,12 @@ func (t *PaymentChaincode) Invoke(stub shim.ChaincodeStubInterface, function str
 		return nil, nil
 
 	} else if function == "confirmFrom" {
+
+		access := t.checkCallerRole(stub, []string{"swiftagent"})
+		if(!access){
+			return nil, errors.New("Caller without role 'swiftagent' cannot execute  'confirmFrom' command")
+		}
+
 		if len(args) != 1 {
 			return nil, errors.New("Incorrect arguments. Expecting paymentId.")
 		}
@@ -82,9 +95,15 @@ func (t *PaymentChaincode) Invoke(stub shim.ChaincodeStubInterface, function str
 
 		payment.ConfirmFrom = true
 		
-		return t.processPaymentConfirmation(stub, payment)
+		return nil, t.processPaymentConfirmation(stub, payment)
 
 	} else if function == "confirmTo" {
+
+		access := t.checkCallerRole(stub, []string{"swiftagent"})
+		if(!access){
+			return nil, errors.New("Caller without role 'swiftagent' cannot execute  'confirmTo' command")
+		}
+
 		if len(args) != 1 {
 			return nil, errors.New("Incorrect arguments. Expecting paymentId.")
 		}
@@ -98,7 +117,7 @@ func (t *PaymentChaincode) Invoke(stub shim.ChaincodeStubInterface, function str
 
 		payment.ConfirmTo = true
 
-		return t.processPaymentConfirmation(stub, payment)
+		return nil, t.processPaymentConfirmation(stub, payment)
 
 	} else {
 		log.Errorf("function: %s, args: %s", function, args)
@@ -107,12 +126,15 @@ func (t *PaymentChaincode) Invoke(stub shim.ChaincodeStubInterface, function str
 }
 
 
-
 // Query callback representing the query of a chaincode
 func (t *PaymentChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 	log.Debugf("function: %s, args: %s", function, args)
 	// Handle different functions
 	if function == "getPayments" {
+		access := t.checkCallerRole(stub, []string{"swiftagent"})
+		if(!access){
+			return nil, errors.New("Caller without role 'swiftagent' cannot execute  'getPayments' command")
+		}
 
 		payments, err := t.getPayments(stub)
 		if err != nil {
@@ -142,41 +164,21 @@ func (t *PaymentChaincode) incrementAndGetCounter(stub shim.ChaincodeStubInterfa
 	return result, err
 }
 
-func (t *PaymentChaincode) getCallerCompany(stub shim.ChaincodeStubInterface) (string, error) {
-	callerCompany, err := stub.ReadCertAttribute("company")
-	if err != nil {
-		log.Error("Failed fetching caller's company. Error: " + err.Error())
-		return "", err
-	}
-	log.Debugf("Caller company is: %s", callerCompany)
-	return string(callerCompany), nil
-}
-
-func (t *PaymentChaincode) getCallerRole(stub shim.ChaincodeStubInterface) (string, error) {
-	callerRole, err := stub.ReadCertAttribute("role")
-	if err != nil {
-		log.Error("Failed fetching caller role. Error: " + err.Error())
-		return "", err
-	}
-	log.Debugf("Caller role is: %s", callerRole)
-	return string(callerRole), nil
-}
-
-func (t *PaymentChaincode) processPaymentConfirmation(stub shim.ChaincodeStubInterface, payment_ payment) ([]byte, error) {
+func (t *PaymentChaincode) processPaymentConfirmation(stub shim.ChaincodeStubInterface, payment_ payment) (error) {
 	log.Debugf("processPaymentConfirmation called with:%+v", payment_)
 
 	if(payment_.ConfirmTo == true && payment_.ConfirmFrom == true){
 		err := t.sendConfirmationToCorrespondingChaincode(stub, payment_)
 		if err != nil {
 			log.Error("Failed fetching caller role. Error: " + err.Error())
-			return nil, err
+			return err
 		}
 		t.archivePayment(stub, payment_.Id)
 	}else{
 		t.updatePayment(stub, payment_)
 	}
 
-	return nil, nil
+	return nil
 }
 
 func (t *PaymentChaincode) sendConfirmationToCorrespondingChaincode(stub shim.ChaincodeStubInterface, payment_ payment) (error) {
@@ -198,6 +200,26 @@ func (t *PaymentChaincode) sendConfirmationToCorrespondingChaincode(stub shim.Ch
 
 	return nil
 }
+
+func (t *PaymentChaincode) checkCallerRole(stub shim.ChaincodeStubInterface, roles []string) (bool) {
+
+	callerRole, err := stub.ReadCertAttribute("role")
+	if err != nil {
+		log.Error("Failed fetching caller role. Error: " + err.Error())
+		return false
+	}
+	stringRole := string(callerRole)
+	log.Debugf("Caller role is: %s", callerRole)
+	for _, role := range roles {
+		if role == stringRole {
+			log.Debugf("Caller role is: %s. Caller has right to execute this command.", callerRole)
+			return true
+		}
+	}
+	log.Debugf("Caller role is: %s. Caller has NO right to execute this command.", callerRole)
+	return false
+}
+
 
 
 func main() {
