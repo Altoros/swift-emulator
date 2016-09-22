@@ -1,223 +1,76 @@
-/*
- *
- */
-
 .loading {
-  text-align: center;
-  font-size: 2em;
-}
-
-.menu-active {
-	font-weight: bold;
-}
-
-/* fixes content shifting left on modal open https://github.com/twbs/bootstrap/commit/3f87bf46e463b113760a2e45158a684825bf9d50 */
-body.modal-open,
-.modal-open .navbar-fixed-top,
-.modal-open .navbar-fixed-bottom {
-  margin-right: 16px;
-}
-
-.panel-default .list-group-item.active
-{
-  color: #000;
-  background-color: #DDD;
-  border-color: #DDD;
-}
-
-.inline-icon-link {
-  cursor: pointer;
-  margin-right: 1em;
-}
-
-.icon-inline {
-  font-size:x-large;
-  vertical-align: middle;
-  margin-right: .3em;
-  margin-left: .3em;
-}
-
-.toptext {color: #333}
-
-.row-padded-bottom, .row-border-bottom, .row-head, .row-inner-head {
-  padding-bottom: 1em;
-  margin-bottom: 1em;
-}
-
-.row-border-bottom, .row-head, .row-inner-head {
-  border-bottom: /* thin solid #ddd */inherit;
-}
-
-.row-padded-top, .row-border-top {
-  padding-top: 1em;
-  margin-top: 1em;
-}
-
-.row-border-top {
-  border-top: thin solid #ddd;
-}
-
-.row-head, .row-inner-head {
-  font-weight: bold;
-}
-
-.row-inner-head {
-  padding-top: 1em;
-}
-
-p.description {
-  padding-top: 1em;
-  font-size: smaller;
-}
-
-span.icon-pointer, span.icon-two, span.icon-three {
-  cursor: pointer;
+  font-size: 30vmin;
   text-align: center;
 }
 
-span.icon-three {
-  width: 30%;
+nav .title {
+  font-family: "BaronFont";
+  font-size: xx-large;
 }
 
-span.icon-two {
-  width: 50%;
+.top-nav {
+  margin-left: 20px;
 }
 
-
-
-
-
-
-
-
-
-
-/*
- * Callouts
- *
- * Not quite alerts, but custom and helpful notes for folks reading the docs.
- * Requires a base and modifier class.
- */
-
-/* Common styles for all types */
-.bs-callout {
-  padding: 20px;
-  margin: 20px 0;
-  border: 1px solid #eee;
-  border-left-width: 5px;
-  border-radius: 3px;
-}
-.bs-callout h4 {
-  margin-top: 0;
-  margin-bottom: 5px;
-}
-.bs-callout p:last-child {
-  margin-bottom: 0;
-}
-.bs-callout code {
-  border-radius: 3px;
+.nav-wrapper a.brand-logo img {
+  height: 30px;
+  left: 25px;
 }
 
-/* Tighten up space between multiple callouts */
-.bs-callout + .bs-callout {
-  margin-top: -5px;
+.foot3 .f-cont {
+  margin: 0;
+  padding: 0;
 }
 
-/* Variations */
-.bs-callout-danger {
-  border-left-color: #ce4844;
-}
-.bs-callout-danger h4 {
-  color: #ce4844;
-}
-.bs-callout-warning {
-  border-left-color: #aa6708;
-}
-.bs-callout-warning h4 {
-  color: #aa6708;
-}
-.bs-callout-info {
-  border-left-color: #1b809e;
-}
-.bs-callout-info h2,
-.bs-callout-info h3,
-.bs-callout-info h4 {
-  color: #1b809e;
+html body .wrapper main {
+  padding-bottom: 152px;
+  margin-bottom: -152px;
 }
 
-.bs-callout-inactive {
-  border-left-color: #9E9E9E;
-}
-.bs-callout-inactive h2,
-.bs-callout-inactive h3,
-.bs-callout-inactive h4 {
-  color: #9E9E9E;
+.container {
+  padding: 6% 0;
 }
 
-.bs-callout{
-  position: relative;
-}
-
-
-
-@media (min-width: 992px) {
-/*@media (min-width: 750px) {*/
-/*@media (min-width: 1170px) {*/
-  .vertical-text {
-    transform: rotate(-90deg);
-    transform-origin: left top 0;
-    width: 300px;
-    text-align: right;
+@media screen and (max-width: 768px) {
+  html body .wrapper main {
+    padding-bottom: 145px;
+    margin-bottom: -145px;
   }
 
-
-  .bs-callout > h3.vertical-text{
-    position: absolute;
-    text-transform: uppercase;
-    left: -30px;
-    top: 280px;
-  }
-
-}
-
-@media (max-width: 992px) {
-   .bs-callout,
-   .bs-callout + .bs-callout{
-    margin-top: 50px;
-   }
-   .bs-callout > h3.vertical-text{
-    position: absolute;
-    text-transform: uppercase;
-    top: -50px;
+  .container {
+    padding: 4% 0;
   }
 }
 
+@media screen and (max-width: 600px) {
+  html body .wrapper main {
+    padding-bottom: 137px;
+    margin-bottom: -137px;
+  }
 
-.my-btn-group {
-  width: 280px;
-}
-.my-btn-group .btn{
-  min-width: 130px;
-}
-
-
-.badge-point{
-  height: 14px;
-  width: 14px;
+  .container {
+    padding: 3% 0;
+  }
 }
 
-.badge-warning{
-  background-color: #f0ad4e;
+.wrapper.vertical-sidebar .side-nav li.active {
+  background-color: #d6d6d6;
 }
-.badge-success{
-  background-color: #5cb85c;
+
+.autoconfirm-badge {
+  width: 15px;
+  height: 15px;
+  border-radius: 10px;
 }
-.badge-danger{
-  background-color: #d9534f;
+
+.autoconfirm-badge.badge-default {
+  color: #bdbdbd;
 }
-.badge-info{
-  background-color: #5bc0de;
+
+.autoconfirm-badge.badge-warning {
+  color: #ffee58;
 }
-.badge-primary{
-  background-color: #337ab7;
+
+.autoconfirm-badge.badge-success {
+  color: #66bb6a;
 }

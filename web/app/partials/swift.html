@@ -1,96 +1,54 @@
-
 <div>
-    <blockchain-log> </blockchain-log>
+  <blockchain-log></blockchain-log>
 </div>
 
+<div class="container">
+  <div class="bs-callout bs-callout-info" id="callout-type-b-i-elems">
+    <table class="table-bordered highlight responsive-table">
+      <thead>
+      <tr>
+        <th>#</th>
+        <th>From</th>
+        <th>To</th>
+        <th>Amount</th>
+        <th>Purpose</th>
+        <th>Payment instructions</th>
+        <th>Confirmation</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="o in ctl.paymentList|filter:ctl.showInList|orderBy:'id*1' as list ">
+        <td>{{::o.id}}</td>
+        <td>{{::o.from}}</td>
+        <td>{{::o.to}}</td>
+        <td>{{::o.amount}}</td>
+        <td>{{::o.purpose}}</td>
+        <td>{{::o.description}}</td>
+        <td class="my-btn-group">
+          <a href="#" ng-show="o.confirm1===false" class="btn btn-default" ng-click="ctl.submitSeller(o)"><i
+            class="glyphicon glyphicon-ok"></i> Payer</a>
+          <a href="#" ng-if="o.confirm1===undefined" class="btn btn-link" disabled><i
+            class="glyphicon glyphicon-time"></i> Processing...</a>
+          <a href="#" ng-if="o.confirm1===true" class="btn btn-success" disabled><i
+            class="glyphicon glyphicon-saved"></i>
+            Confirmed</a>
 
+          <a href="#" ng-show="o.confirm2===false" class="btn btn-default" ng-click="ctl.submitBuyer(o)"><i
+            class="glyphicon glyphicon-ok"></i> Payee</a>
+          <a href="#" ng-if="o.confirm2===undefined" class="btn btn-link" disabled><i
+            class="glyphicon glyphicon-time"></i> Processing...</a>
+          <a href="#" ng-if="o.confirm2===true" class="btn btn-success" disabled><i
+            class="glyphicon glyphicon-saved"></i>
+            Confirmed</a>
+        </td>
+      </tr>
 
-
-<nav class="navbar navbar-default" ng-init="ctl.init()">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <!-- <button type="button" class="collapsed navbar-toggle" data-toggle="collapse" data-target="#navbar1" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button> -->
-            <a href="#" class="navbar-brand">Brand</a>
-        </div>
-
-        <div class="collapse navbar-collapse" id="navbar1">
-            <ul class="nav navbar-nav pull-right">
-                <li class="dropdown" style="width: 275px">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                      Auto confirmation : <span class="badge badge-point" ng-class="ctl.getAutoconfirmBadge(ctl.autoconfirm)"> </span> {{ctl.getAutoconfirmLabel(ctl.autoconfirm)}}
-                      <span class="caret"></span>
-                  </a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#" ng-click="ctl.onModeChanged(ctl.CONFIRM_OFF)">{{::ctl.getAutoconfirmLabel(ctl.CONFIRM_OFF)}}</a></li>
-                    <li><a href="#" ng-click="ctl.onModeChanged(ctl.CONFIRM_LIMIT)">{{::ctl.getAutoconfirmLabel(ctl.CONFIRM_LIMIT)}}</a></li>
-                    <li><a href="#" ng-click="ctl.onModeChanged(ctl.CONFIRM_ON)">{{::ctl.getAutoconfirmLabel(ctl.CONFIRM_ON)}}</a></li>
-                  </ul>
-                </li>
-            </ul>
-          </div>
-
-        </div>
-    </div>
-</nav>
-
-<div class="bs-callout bs-callout-info" id="callout-type-b-i-elems" >
-    <h3 class="vertical-text">Payment Instructions</h3>
-
-    <!-- <h2></h2> -->
-    <table class="table">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>From</th>
-                <th>To</th>
-                <th>Amount</th>
-                <th>Purpose</th>
-                <th>Payment instructions</th>
-                <th>Confirmation</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="o in ctl.paymentList|filter:ctl.showInList|orderBy:'id*1' as list ">
-                <td>{{::o.id}}</td>
-                <td>{{::o.from}}</td>
-                <td>{{::o.to}}</td>
-                <td>{{::o.amount}}</td>
-                <td>{{::o.purpose}}</td>
-                <td>{{::o.description}}</td>
-                <td class="my-btn-group">
-                    <a href="#" ng-show="o.confirm1===false" class="btn btn-default" ng-click="ctl.submitSeller(o)"><i class="glyphicon glyphicon-ok"></i> Payer</a>
-                    <a href="#" ng-if="o.confirm1===undefined" class="btn btn-link" disabled><i class="glyphicon glyphicon-time"></i> Processing...</a>
-                    <a href="#" ng-if="o.confirm1===true" class="btn btn-success" disabled><i class="glyphicon glyphicon-saved"></i> Confirmed</a>
-
-                    <a href="#" ng-show="o.confirm2===false" class="btn btn-default" ng-click="ctl.submitBuyer(o)"><i class="glyphicon glyphicon-ok"></i> Payee</a>
-                    <a href="#" ng-if="o.confirm2===undefined" class="btn btn-link" disabled><i class="glyphicon glyphicon-time"></i> Processing...</a>
-                    <a href="#" ng-if="o.confirm2===true" class="btn btn-success" disabled><i class="glyphicon glyphicon-saved"></i> Confirmed</a>
-                </td>
-            </tr>
-
-            <tr ng-hide="list.length">
-                <td colspan="5" align="center">
-                    <i>No items</i>
-                </td>
-            </tr>
-        </tbody>
+      <tr ng-hide="list.length">
+        <td colspan="5" align="center">
+          <i>No items</i>
+        </td>
+      </tr>
+      </tbody>
     </table>
-
-
+  </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-

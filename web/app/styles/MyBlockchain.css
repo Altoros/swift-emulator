@@ -1,9 +1,9 @@
 blockchain-log .bc-wrapper {
-    height: 80px;
+    height: 60px;
     background: #181C22;
     color: #646B73;
     width: 100%;
-    border-top: 25px #222832 solid
+    padding: 15px 25px;
 }
 
 blockchain-log .blckLegend {
@@ -12,8 +12,6 @@ blockchain-log .blckLegend {
 
 blockchain-log #bc-wrapper-block {
     position: relative;
-    margin: 15px 25px;
-    overflow: hidden;
     min-height: 30px;
 }
 

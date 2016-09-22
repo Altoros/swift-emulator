@@ -31,14 +31,15 @@ function SwiftController($scope, $log, $interval, PeerService, $rootScope) {
 
 
   ctl.paymentList = [];
-  ctl.autoconfirm = ctl.CONFIRM_LIMIT;
+  $rootScope.autoconfirm = ctl.CONFIRM_LIMIT;
 
   ctl.init = function(){
     ctl.reload();
-    $rootScope.$on('chainblock', function(payload){
-          ctl.reload();
-    });
   };
+
+  $rootScope.$on('chainblock', function(payload){
+    ctl.reload();
+  });
 
   ctl.reload = function(){
     PeerService.getPayments().then(function(list) {
@@ -48,10 +49,10 @@ function SwiftController($scope, $log, $interval, PeerService, $rootScope) {
   };
 
    ctl.onListUpdated = function(){
-        if(ctl.autoconfirm == ctl.CONFIRM_OFF || ctl.paymentList == null){
+        if($rootScope.autoconfirm == ctl.CONFIRM_OFF || ctl.paymentList == null){
             return
         }
-        start = ctl.autoconfirm == ctl.CONFIRM_ON ? 0 : 2;
+        start = $rootScope.autoconfirm == ctl.CONFIRM_ON ? 0 : 2;
         for(var t=start;t<ctl.paymentList.length;t++){
             payment = ctl.paymentList[t];
             if(!payment.confirm1){
@@ -64,7 +65,7 @@ function SwiftController($scope, $log, $interval, PeerService, $rootScope) {
    };
 
    ctl.onModeChanged = function(mode){
-        ctl.autoconfirm = mode;
+        $rootScope.autoconfirm = mode;
         ctl.onListUpdated();
    };
 
