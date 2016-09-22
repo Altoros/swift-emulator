@@ -7,4 +7,8 @@ Emulator for SWIFT payments.
 
 # Start porject in local environment
   
-    gulp serve
+    node index
+
+## Specify custom port and run
+  
+    GULP_PORT=8080 node index

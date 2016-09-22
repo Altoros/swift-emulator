@@ -13,6 +13,7 @@ blockchain-log .blckLegend {
 blockchain-log #bc-wrapper-block {
     position: relative;
     margin: 15px 25px;
+    padding-bottom: 40px;
     overflow: hidden;
     min-height: 30px;
 }

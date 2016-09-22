@@ -52,7 +52,8 @@ angular.module('MyBlockchain', [])
        *
        */
       ctl.init = function(){
-        var socket = io('ws://'+location.hostname+':8155/');
+        // var socket = io('ws://'+location.hostname+':8155/');
+        var socket = io('ws://'+location.host);
         socket.emit('hello', 'Hi from client');
         socket.emit('endpoint', endpoint);
 

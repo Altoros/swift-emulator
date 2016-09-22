@@ -120,9 +120,12 @@ function _createChannelToBlockchain(endpoint, _io){
 /**
  *
  */
-function createSocket(){
-  var http = require('http').Server();
-  var io = require('socket.io')(http);
+function createSocket(app){
+  if(!app){
+    app = require('http').Server();
+  }
+
+  var io = require('socket.io')(app);
 
   io.on('connection', function(socket){
     //console.log(socket);
@@ -151,12 +154,7 @@ function createSocket(){
 
   });
 
-  // now listen server.
-  http.listen(8155,function(){
-    console.log('[io] Socket Started Listening on Port: 8155');
-  });
-
-  return io;
+  return app;
 }
 
 
@@ -191,8 +189,8 @@ function _trackBlockChanges(endpoint, io){
 ////////////////////////////////////////////
 
 module.exports = {
-  trackBlockChanges : function(/*endpoint*/){
-    var io = createSocket();
+  trackBlockChanges : function(app){
+    return createSocket(app);
     // _trackBlockChanges('localhost:7053', io);
     // _trackBlockChanges(endpoint, io);
   }
