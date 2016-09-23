@@ -1,7 +1,7 @@
 angular.module('config', [])
 .constant('cfg',
     {
-  endpoint: 'http://swift.altoros.com:7050/chaincode',
+  endpoint: 'http://vp2.altoros.com:7050/chaincode',
 //  endpoint: 'http://localhost:7050/chaincode',
   secureContext: 'swift',
   chaincodeID: "1f8052f0a64a12bb4f59cd5b5cd916fa7fe1aee929cf629c0e0f6eabb9d7f819c7cb5d39ad965e2c658d6e63c344fd7e655ff400ee34390e66650d60dabc2b64",

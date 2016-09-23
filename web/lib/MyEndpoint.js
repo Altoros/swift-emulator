@@ -17,6 +17,8 @@ var EventType = protos.EventType;
  *
  */
 function MyEndpoint(endpoint/*, credentials */){
+  console.log('MyEndpoint', endpoint);
+
   var self = this;
 
   var _ep = endpoint;
@@ -24,6 +26,7 @@ function MyEndpoint(endpoint/*, credentials */){
 
   self.createChatStream = createChatStream;
 
+  self.getEndpoint = function(){ return _ep; };
 
   /**
    *
@@ -74,13 +77,55 @@ function MyEndpoint(endpoint/*, credentials */){
 
 
 
+var myEndpoint = null;
+var stream = null;
+var _timer = null;
 
 /**
  *
  */
-function createSocket(){
-  var http = require('http').Server();
-  var io = require('socket.io')(http);
+function _createChannelToBlockchain(endpoint, _io){
+  var that = this;
+  if(myEndpoint && myEndpoint.getEndpoint() === endpoint) {
+    return myEndpoint;
+  }
+
+  if(stream){
+    stream.end();
+    stream = null;
+    clearTimeout(_timer);
+  }
+
+  // create grpc endpoint
+  myEndpoint = new MyEndpoint(endpoint);
+
+  stream = myEndpoint.createChatStream();
+  stream.on('data', message=>{
+    console.log('data:', message);
+    if(message.block){
+      _io.emit('chainblock', message);
+    }
+  });
+  stream.on('error', err=>{
+    console.log('error:', err);
+    // stream.close();
+    myEndpoint = null;
+    _timer = setTimeout( _createChannelToBlockchain.bind(that, endpoint, _io), 1000);
+  });
+
+}
+
+
+
+/**
+ *
+ */
+function createSocket(app){
+  if(!app){
+    app = require('http').Server();
+  }
+
+  var io = require('socket.io')(app);
 
   io.on('connection', function(socket){
     //console.log(socket);
@@ -96,6 +141,12 @@ function createSocket(){
       console.log('[io] client hello:', payload);
     });
 
+    socket.on('endpoint',  function(endpoint) {
+      console.log('[io] client endpoint:', endpoint);
+
+      _createChannelToBlockchain(endpoint, io);
+    });
+
     socket.on('disconnect', function(socket){
       console.log('[io] user disconnected');
       // io.emit('chat_message_response',"1 user disconnected.");
@@ -103,12 +154,7 @@ function createSocket(){
 
   });
 
-  // now listen server.
-  http.listen(8155,function(){
-    console.log('[io] Socket Started Listening on Port: 8155');
-  });
-
-  return io;
+  return app;
 }
 
 
@@ -138,14 +184,15 @@ function _trackBlockChanges(endpoint, io){
 
 
 
+
+
 ////////////////////////////////////////////
 
 module.exports = {
-  trackBlockChanges : function(endpoint){
-    console.log(endpoint);
-    var io = createSocket();
+  trackBlockChanges : function(app){
+    return createSocket(app);
     // _trackBlockChanges('localhost:7053', io);
-    _trackBlockChanges(endpoint, io);
+    // _trackBlockChanges(endpoint, io);
   }
 };
 
@@ -166,7 +213,8 @@ function getResponseExample(){
           "chaincodeID": {},
           "payload": {},
           "metadata": {},
-          "txid": "d6b67c6f-5b77-43aa-8aef-9a528c874016",
+          "txid": "tst-test-transaction-id",
+          "_txid_original": "d6b67c6f-5b77-43aa-8aef-9a528c874016",
           "timestamp": {
             "seconds": "1472243595",
             "nanos": 878832249
