@@ -150,7 +150,9 @@ angular.module('MyBlockchain', [])
 
 
 
-
+/***
+ *
+ */
 .directive('blockchainPie', function(){
 
 var nodes_example = {
@@ -177,7 +179,7 @@ return {
     restrict:'E',
     replace: true,
     // scope: true,
-    scope: { size:'=', data:'=', filter:'='},
+    scope: { size:'=', data:'=', filter:'=', filterDirection:'='},
     template: '<div id="drawing" class="blockchain-pie">'
               +'<div id="bc_popup_anchor"></div>'
               +'</div>',
@@ -489,7 +491,7 @@ return {
 
 
             // filter
-            if($scope.filter && $scope.filter !== id){
+            if($scope.filter!==null && $scope.filter !== id && (!me.loan[$scope.filter] || $scope.filterDirection!=="two")){
               me.svg.hide();
             }else{
               me.svg.show();
@@ -525,12 +527,13 @@ return {
               }
 
               // filter
-              if($scope.filter && $scope.filter !== id){
+              if($scope.filter!==null && $scope.filter !== id && ( tid!==$scope.filter || $scope.filterDirection!=="two") ){
                 me.loan[tid].svg.hide();
               }else{
                 me.loan[tid].svg.show();
                 target.svg.show();
               }
+
 
 
             });
