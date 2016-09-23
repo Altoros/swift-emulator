@@ -35,9 +35,7 @@
                 <div class="col-md-12 ">
                     <span class="btn btn-primary" ng-click="ctl.addCounterParty()" freq> <i class="glyphicon glyphicon-plus"></i> Add counterparty</span>
                 </div>
-                <div class="col-md-12 ">
-                    <span class="btn btn-danger" ng-click="ctl.addClaim()" freq> <i class="glyphicon glyphicon-euro"></i> Add claim</span>
-                </div>
+
                 <div class="col-md-12 ">
                     <span class="btn btn-warning" ng-click="ctl.runNetting()" freq><i class="glyphicon glyphicon-resize-small"></i> Run netting</span>
                 </div>
@@ -53,9 +51,11 @@
             </div>
 
             <div role="tabpanel" class="tab-pane" id="user1" ng-class="ctl.filterId ?'active':''">
-                <p style="margin-top:40px; margin-left:40px;">
-                    <i>Read-only mode</i>
-                </p>
+
+                <div class="col-md-12 ">
+                    <span class="btn btn-danger" ng-click="ctl.addClaim(ctl.filterId)" freq> <i class="glyphicon glyphicon-euro"></i> Add claim</span>
+                </div>
+
             </div>
         </div><!-- /.tab-content -->
 

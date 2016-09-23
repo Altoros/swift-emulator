@@ -81,16 +81,20 @@ function MainController($scope, $log, $interval, PeerService, $rootScope, cfg) {
         });
     };
 
-    ctl.addClaim = function() {
+    ctl.addClaim = function(userId) {
         var ids = Object.keys(ctl.nodesData);
 
         var from, to, fuse = 100;
+        var val, val_back;
         do {
-            from = ids[parseInt(Math.random() * ids.length)];
-            to = ids[parseInt(Math.random() * ids.length)];
-            var val = 0.1 + Math.random();
+            // decide userId will be source or target
+            var isFrom = Math.random()>0.5;
 
-            var val_back = ctl.nodesData[to].loan[from] ? ctl.nodesData[to].loan[from].val : 0;
+            from = isFrom && userId || ids[parseInt(Math.random() * ids.length)];
+            to = !isFrom && userId || ids[parseInt(Math.random() * ids.length)];
+            val = 0.1 + Math.random();
+
+            val_back = ctl.nodesData[to].loan[from] ? ctl.nodesData[to].loan[from].val : 0;
 
         } while (fuse-- > 0 && ( (to == from) || !!ctl.nodesData[from].loan[to] || val < val_back) );
         if (fuse <= 0) {
