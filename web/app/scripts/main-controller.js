@@ -90,8 +90,8 @@ function MainController($scope, $log, $interval, PeerService, $rootScope, cfg) {
             // decide userId will be source or target
             var isFrom = Math.random()>0.5;
 
-            from = isFrom && userId || ids[parseInt(Math.random() * ids.length)];
-            to = !isFrom && userId || ids[parseInt(Math.random() * ids.length)];
+            from = (isFrom && userId) ? userId : ids[parseInt(Math.random() * ids.length)];
+            to = (!isFrom && userId) ? userId : ids[parseInt(Math.random() * ids.length)];
             val = 0.1 + Math.random();
 
             val_back = ctl.nodesData[to].loan[from] ? ctl.nodesData[to].loan[from].val : 0;

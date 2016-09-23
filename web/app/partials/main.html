@@ -37,6 +37,10 @@
                 </div>
 
                 <div class="col-md-12 ">
+                    <span class="btn btn-danger" ng-click="ctl.addClaim()" freq> <i class="glyphicon glyphicon-euro"></i> Add claim</span>
+                </div>
+
+                <div class="col-md-12 ">
                     <span class="btn btn-warning" ng-click="ctl.runNetting()" freq><i class="glyphicon glyphicon-resize-small"></i> Run netting</span>
                 </div>
 
@@ -53,7 +57,7 @@
             <div role="tabpanel" class="tab-pane" id="user1" ng-class="ctl.filterId ?'active':''">
 
                 <div class="col-md-12 ">
-                    <span class="btn btn-danger" ng-click="ctl.addClaim(ctl.filterId)" freq> <i class="glyphicon glyphicon-euro"></i> Add claim</span>
+                    <span class="btn" ng-click="ctl.addClaim(ctl.filterId)" freq style="background-color: {{ctl.nodesData[ctl.filterId].color}}"> <i class="glyphicon glyphicon-euro"></i> Add claim</span>
                 </div>
 
             </div>
