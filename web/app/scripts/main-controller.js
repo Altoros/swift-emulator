@@ -20,7 +20,7 @@ PaymentOrder : {
 
 
 */
-function SwiftController($scope, $log, $interval, PeerService, $rootScope, cfg) {
+function MainController($scope, $log, $interval, PeerService, $rootScope, cfg) {
 
     var ctl = this;
     $scope.Math = window.Math;
@@ -239,6 +239,6 @@ var responseExample = {
 
 
 
-angular.module('swiftController', ['LocalStorageModule'])
-    .controller('SwiftController', SwiftController)
+angular.module('mainController', ['LocalStorageModule'])
+    .controller('MainController', MainController)
     // .controller('VerifyModalController', VerifyModalController);
