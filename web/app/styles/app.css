@@ -1,223 +1,111 @@
-/*
- *
- */
-
 .loading {
+  font-size: 30vmin;
   text-align: center;
-  font-size: 2em;
 }
 
-.menu-active {
-	font-weight: bold;
+.top-nav {
+  margin-left: 0;
 }
 
-/* fixes content shifting left on modal open https://github.com/twbs/bootstrap/commit/3f87bf46e463b113760a2e45158a684825bf9d50 */
-body.modal-open,
-.modal-open .navbar-fixed-top,
-.modal-open .navbar-fixed-bottom {
-  margin-right: 16px;
+.nav-wrapper {
+  line-height: 64px;
+  padding: 0 30px;
 }
 
-.panel-default .list-group-item.active
-{
-  color: #000;
-  background-color: #DDD;
-  border-color: #DDD;
+.nav-wrapper .logo {
+  float: left;
 }
 
-.inline-icon-link {
-  cursor: pointer;
-  margin-right: 1em;
+.nav-wrapper .logo img {
+  height: 64px;
+  vertical-align: top;
 }
 
-.icon-inline {
-  font-size:x-large;
+.nav-wrapper .menu {
+  display: inline-block;
+}
+
+.nav-wrapper .title {
+  float: right;
+  font-family: "BaronFont";
+  font-size: xx-large;
   vertical-align: middle;
-  margin-right: .3em;
-  margin-left: .3em;
+  padding-top: 2px;
 }
 
-.toptext {color: #333}
-
-.row-padded-bottom, .row-border-bottom, .row-head, .row-inner-head {
-  padding-bottom: 1em;
-  margin-bottom: 1em;
+.foot3 .f-cont {
+  margin: 0;
+  padding: 0;
 }
 
-.row-border-bottom, .row-head, .row-inner-head {
-  border-bottom: /* thin solid #ddd */inherit;
+html body .wrapper main {
+  padding-bottom: 152px;
+  margin-bottom: -152px;
 }
 
-.row-padded-top, .row-border-top {
-  padding-top: 1em;
-  margin-top: 1em;
+.container {
+  padding: 2% 0;
 }
 
-.row-border-top {
-  border-top: thin solid #ddd;
+@media screen and (max-width: 1024px) {
+  .nav-wrapper .logo {
+    float: right;
+  }
 }
 
-.row-head, .row-inner-head {
+@media screen and (max-width: 768px) {
+  html body .wrapper main {
+    padding-bottom: 145px;
+    margin-bottom: -145px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  html body .wrapper main {
+    padding-bottom: 137px;
+    margin-bottom: -137px;
+  }
+
+  .nav-wrapper .logo img {
+    height: 54px;
+  }
+}
+
+.wrapper.vertical-sidebar .side-nav li.active, .wrapper.vertical-sidebar .side-nav li .menu-active {
+  background-color: #d6d6d6;
+}
+
+.header-right {
+  max-width: 400px;
+}
+
+nav .menu-active {
   font-weight: bold;
+  background-color: rgba(0,0,0,0.1);
 }
 
-.row-inner-head {
-  padding-top: 1em;
-}
-
-p.description {
-  padding-top: 1em;
-  font-size: smaller;
-}
-
-span.icon-pointer, span.icon-two, span.icon-three {
+[ng-click] {
   cursor: pointer;
-  text-align: center;
 }
 
-span.icon-three {
-  width: 30%;
+td, th {
+  font-size: large;
 }
 
-span.icon-two {
-  width: 50%;
+.autoconfirm-badge {
+  width: 15px;
+  height: 15px;
+  border-radius: 10px;
 }
 
-
-
-
-
-
-
-
-
-
-/*
- * Callouts
- *
- * Not quite alerts, but custom and helpful notes for folks reading the docs.
- * Requires a base and modifier class.
- */
-
-/* Common styles for all types */
-.bs-callout {
-  padding: 20px;
-  margin: 20px 0;
-  border: 1px solid #eee;
-  border-left-width: 5px;
-  border-radius: 3px;
-}
-.bs-callout h4 {
-  margin-top: 0;
-  margin-bottom: 5px;
-}
-.bs-callout p:last-child {
-  margin-bottom: 0;
-}
-.bs-callout code {
-  border-radius: 3px;
+.autoconfirm-badge.badge-default {
+  color: #bdbdbd;
 }
 
-/* Tighten up space between multiple callouts */
-.bs-callout + .bs-callout {
-  margin-top: -5px;
+.autoconfirm-badge.badge-warning {
+  color: #ffee58;
 }
 
-/* Variations */
-.bs-callout-danger {
-  border-left-color: #ce4844;
-}
-.bs-callout-danger h4 {
-  color: #ce4844;
-}
-.bs-callout-warning {
-  border-left-color: #aa6708;
-}
-.bs-callout-warning h4 {
-  color: #aa6708;
-}
-.bs-callout-info {
-  border-left-color: #1b809e;
-}
-.bs-callout-info h2,
-.bs-callout-info h3,
-.bs-callout-info h4 {
-  color: #1b809e;
-}
-
-.bs-callout-inactive {
-  border-left-color: #9E9E9E;
-}
-.bs-callout-inactive h2,
-.bs-callout-inactive h3,
-.bs-callout-inactive h4 {
-  color: #9E9E9E;
-}
-
-.bs-callout{
-  position: relative;
-}
-
-
-
-@media (min-width: 992px) {
-/*@media (min-width: 750px) {*/
-/*@media (min-width: 1170px) {*/
-  .vertical-text {
-    transform: rotate(-90deg);
-    transform-origin: left top 0;
-    width: 300px;
-    text-align: right;
-  }
-
-
-  .bs-callout > h3.vertical-text{
-    position: absolute;
-    text-transform: uppercase;
-    left: -30px;
-    top: 280px;
-  }
-
-}
-
-@media (max-width: 992px) {
-   .bs-callout,
-   .bs-callout + .bs-callout{
-    margin-top: 50px;
-   }
-   .bs-callout > h3.vertical-text{
-    position: absolute;
-    text-transform: uppercase;
-    top: -50px;
-  }
-}
-
-
-.my-btn-group {
-  width: 280px;
-}
-.my-btn-group .btn{
-  min-width: 130px;
-}
-
-
-.badge-point{
-  height: 14px;
-  width: 14px;
-}
-
-.badge-warning{
-  background-color: #f0ad4e;
-}
-.badge-success{
-  background-color: #5cb85c;
-}
-.badge-danger{
-  background-color: #d9534f;
-}
-.badge-info{
-  background-color: #5bc0de;
-}
-.badge-primary{
-  background-color: #337ab7;
+.autoconfirm-badge.badge-success {
+  color: #66bb6a;
 }

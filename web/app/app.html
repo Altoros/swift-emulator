@@ -4,46 +4,104 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hyperledger Proof Of Concept</title>
+    <title>Hyperledger Swift Emulator PoC</title>
+
+    <link rel="shortcut icon" type="image/x-icon" href="images/altoros.png">
 
     <!-- Page styles -->
 
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css">
+    <link type="text/css" rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link type="text/css" rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css">
+    <link type="text/css" rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
 
     <!-- build:css styles/app.min.css -->
-    <!-- <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css"> -->
-    <!-- <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.min.css"> -->
-    <link rel="stylesheet" href="styles/app.css">
-    <link rel="stylesheet" href="styles/MyBlockchain.css">
+    <link type="text/css" rel="stylesheet" href="styles/material-design-iconic-font.css"/>
+    <link type="text/css" rel="stylesheet" href="styles/main.css"/>
+    <link type="text/css" rel="stylesheet" href="styles/app.css"/>
+    <link type="text/css" rel="stylesheet" href="styles/MyBlockchain.css"/>
     <!-- endbuild -->
 
   </head>
 
-  <body style="padding-top: 40px;">
+  <body class="dark-scheme horizontal-navigation">
+    <div class="wrapper vertical-sidebar">
+      <header id="header">
+        <nav>
+          <div class="nav-wrapper center">
+            <a href="#" sidenav data-activates="nav-mobile" class="button-collapse top-nav full waves-effect waves-light hide-on-large-only">
+              <i class="material-icons">menu</i>
+            </a>
 
+            <a class="logo" href="#"><img src="images/altoros.png" alt="Swift Emulator"></a>
 
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
+            <ul class="menu hide-on-med-and-down">
+              <li ng-controller="SwiftController as ctl">
+                <a class="dropdown-button drop-down-profile relative-item" href="#" data-activates="dropdown7" data-beloworigin="true">
+                  {{ctl.getAutoconfirmLabel($root.autoconfirm)}}
+                  <span class="fa fa-circle autoconfirm-badge" ng-class="ctl.getAutoconfirmBadge($root.autoconfirm)"></span>
+                  <i class="zmdi zmdi-caret-down drop-down-icon"></i>
+                </a>
+                <ul id="dropdown7" class="dropdown-content">
+                  <li ng-class="{active: $root.autoconfirm == ctl.CONFIRM_OFF}">
+                    <a href="#" ng-click="ctl.onModeChanged(ctl.CONFIRM_OFF)">{{ctl.getAutoconfirmLabel(ctl.CONFIRM_OFF)}}</a>
+                  </li>
+                  <li ng-class="{active: $root.autoconfirm == ctl.CONFIRM_LIMIT}">
+                    <a href="#" ng-click="ctl.onModeChanged(ctl.CONFIRM_LIMIT)">{{ctl.getAutoconfirmLabel(ctl.CONFIRM_LIMIT)}}</a>
+                  </li>
+                  <li ng-class="{active: $root.autoconfirm == ctl.CONFIRM_ON}">
+                    <a href="#" ng-click="ctl.onModeChanged(ctl.CONFIRM_ON)">{{ctl.getAutoconfirmLabel(ctl.CONFIRM_ON)}}</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
 
-          <div ui-view><div class="loading"><i class="fa fa-spinner fa-spin"></i></div></div>
-          <!-- <ui-view/> -->
+            <div class="title hide-on-med-and-down">Swift Emulator</div>
+          </div>
+        </nav>
+      </header>
+      <aside class="sidebar-left" side-bar="" ng-controller="SwiftController as ctl">
+        <ul class="side-nav fixed clearfix left" id="nav-mobile">
+          <h5 class="center">Auto confirmation</h5>
+          <li ng-class="{active: $root.autoconfirm == ctl.CONFIRM_OFF}">
+            <a href="#" ng-click="ctl.onModeChanged(ctl.CONFIRM_OFF)">{{ctl.getAutoconfirmLabel(ctl.CONFIRM_OFF)}}</a>
+          </li>
+          <li ng-class="{active: $root.autoconfirm == ctl.CONFIRM_LIMIT}">
+            <a href="#" ng-click="ctl.onModeChanged(ctl.CONFIRM_LIMIT)">{{ctl.getAutoconfirmLabel(ctl.CONFIRM_LIMIT)}}</a>
+          </li>
+          <li ng-class="{active: $root.autoconfirm == ctl.CONFIRM_ON}">
+            <a href="#" ng-click="ctl.onModeChanged(ctl.CONFIRM_ON)">{{ctl.getAutoconfirmLabel(ctl.CONFIRM_ON)}}</a>
+          </li>
+        </ul>
+      </aside>
+      <main id="content">
+        <div id="page-content">
+          <div ui-view>
+            <div class="loading">
+              <i class="fa fa-spinner fa-spin"></i>
+            </div>
+          </div>
+        </div>
+      </main>
+      <div class="foot3">
+        <div class="f-cont col s6 m6 l3">
+          <p>Hyperledger Swift Emulator PoC</p>
+        </div>
+        <div class="f-cont valign-wrapper f-foot col s12 m12 l12">
+          <div class="left-align valign col s6 m6 l6">
+            <p class="copy">
+              ©Copyright 2016 - All Rights Reserved
+            </p>
+          </div>
         </div>
       </div>
     </div>
 
-
     <!--  cdn with fallback -->
 
-    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script src="//cdn.socket.io/socket.io-1.4.5.js"></script>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="bower_components/jquery/dist/jquery.min.js"><\/script>')</script>
-
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <script>(typeof $.fn.popover == 'function') || document.write('<script src="bower_components/bootstrap/dist/js/bootstrap.js"><\/script>')</script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.13.1/lodash.min.js"></script>
     <script>window._ || document.write('<script src="bower_components/lodash/lodash.js"><\/script>')</script>
@@ -57,9 +115,12 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls.min.js"></script>
     <script>window.angular || document.write('<script src="bower_components/angular-ui-bootstrap/ui-bootstrap-tpls.min.js"><\/script>')</script>
 
-    <script src="scripts/angular-local-storage.min.js"></script>
 
     <!-- build:vendor scripts/vendor.min.js -->
+    <script type="text/javascript" src="scripts/angular-local-storage.min.js"></script>
+    <script type="text/javascript" src="scripts/materialize.js"></script>
+    <script type="text/javascript" src="scripts/angular-materialize.js"></script>
+    <script type="text/javascript" src="scripts/mara.min.js"></script>
     <!-- endbuild -->
 
     <!-- build:js scripts/app.min.js -->

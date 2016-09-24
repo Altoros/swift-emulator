@@ -14,9 +14,7 @@
   ],
   "dependencies": {
     "angular": "~1.4.7",
-    "bootstrap": "~3.3.5",
     "angular-ui": "~0.4.0",
-    "angular-ui-bootstrap": "~0.14.3",
     "angular-ui-router": "~0.2.15",
     "components-font-awesome": "~4.4.0",
     "lodash": "^4.13.1"
