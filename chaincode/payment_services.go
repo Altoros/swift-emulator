@@ -174,6 +174,10 @@ func (t *PaymentChaincode) getPayment(stub shim.ChaincodeStubInterface, paymentI
 	}
 
 	var result payment
+	if len(row.Columns) == 0 || row.Columns[0].GetString_() != paymentId {
+		log.Debugf("getPayment result: nil")
+		return result, errors.New("getPayment result: nil")
+	}
 	result.readFromRow(row)
 	log.Debugf("getPayment result: %+v", result)
 	return result, nil
