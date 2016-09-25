@@ -5,7 +5,7 @@ angular.module('config', [])
   endpoint: 'http://vp2.altoros.com:7050/chaincode',
 //  endpoint: 'http://localhost:7050/chaincode',
   secureContext: 'swift',
-  chaincodeID: "1f8052f0a64a12bb4f59cd5b5cd916fa7fe1aee929cf629c0e0f6eabb9d7f819c7cb5d39ad965e2c658d6e63c344fd7e655ff400ee34390e66650d60dabc2b64",
+  chaincodeID: "2fe5ccdb43c37c2bab0156dc1023906166eee22c6a206befd396f5b3937a7988aa8163acca704b1cd1949e217c9404a644a8aa191334b26c8846284aab48de8e",
   users: [{id: 'issuer0', role: 'issuer', endpoint:'http://localhost:7050/chaincode'},
           {id: 'issuer1', role: 'issuer', endpoint:'http://localhost:7050/chaincode'},
           {id: 'investor0', role: 'investor', endpoint:'http://localhost:7050/chaincode'},
