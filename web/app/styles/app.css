@@ -109,3 +109,11 @@ td, th {
 .autoconfirm-badge.badge-success {
   color: #66bb6a;
 }
+
+.my-btn-group {
+  width: 280px;
+}
+.my-btn-group .btn{
+  min-width: 130px;
+  margin-bottom: 10px;
+}
